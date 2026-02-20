@@ -1,215 +1,68 @@
 <!DOCTYPE html>
-<html>
+<html lang="tr">
 <head>
 <meta charset="UTF-8">
-<title>Doruk Global Transfer</title>
-
+<title>Transferler</title>
 <style>
-body{
-    margin:0;
-    font-family:Arial;
-    background:#0e0e0e;
-    color:white;
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f2f2f2;
 }
 
-header{
-    background:#c40000;
-    padding:25px;
-    text-align:center;
+.transfer-container {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
 }
 
-nav{
-    background:#1a1a1a;
-    padding:15px;
-    text-align:center;
+.transfer-card {
+  background: white;
+  width: 250px;
+  border-radius: 12px;
+  padding: 15px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  text-align: center;
+  transition: 0.3s;
 }
 
-nav button{
-    margin:5px;
-    padding:10px 15px;
-    border:none;
-    background:#c40000;
-    color:white;
-    cursor:pointer;
-    border-radius:5px;
-    font-weight:bold;
+.transfer-card:hover {
+  transform: scale(1.05);
 }
 
-nav button:hover{
-    background:#ff0000;
+.transfer-card img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
-.section{
-    display:none;
-    padding:20px;
+.transfer-info {
+  margin-top: 10px;
+  font-size: 14px;
 }
 
-.grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-    gap:15px;
-}
-
-.card{
-    background:#1e1e1e;
-    padding:15px;
-    border-radius:10px;
-    cursor:pointer;
-    text-align:center;
-}
-
-.card img{
-    width:100%;
-    height:150px;
-    object-fit:cover;
-    border-radius:8px;
-}
-
-.card:hover{
-    background:#2a2a2a;
-}
-
-.player-detail{
-    display:none;
-    margin-top:15px;
-    background:#222;
-    padding:15px;
-    border-radius:10px;
-}
-
-.hero{
-    background:url('https://images.unsplash.com/photo-1508098682722-e99c643e7f51') center/cover;
-    height:300px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    text-align:center;
-    font-size:30px;
-    font-weight:bold;
+.arrow {
+  font-size: 20px;
+  margin: 5px 0;
 }
 </style>
-
-<script>
-function showSection(id){
-    document.querySelectorAll('.section').forEach(sec=>sec.style.display="none");
-    document.getElementById(id).style.display="block";
-}
-
-function showPlayer(id){
-    document.querySelectorAll('.player-detail').forEach(det=>det.style.display="none");
-    document.getElementById(id).style.display="block";
-}
-</script>
-
 </head>
 <body>
 
-<header>
-<h1>🌍 Doruk Global Transfer Merkezi</h1>
-</header>
+<h2>Son Transferler</h2>
 
-<nav>
-<button onclick="showSection('home')">Ana Sayfa</button>
-<button onclick="showSection('superlig')">Süper Lig</button>
-<button onclick="showSection('premier')">Premier League</button>
-<button onclick="showSection('laliga')">La Liga</button>
-<button onclick="showSection('seriea')">Serie A</button>
-<button onclick="showSection('bundesliga')">Bundesliga</button>
-<button onclick="showSection('ligue1')">Ligue 1</button>
-</nav>
+<div class="transfer-container">
 
-<div id="home" class="section" style="display:block;">
-
-<div class="hero">
-SON DAKİKA TRANSFERLERİ
-</div>
-
-<h2>⚽ Dünya Futbolu</h2>
-
-<div class="grid">
-<div class="card">
-<img src="https://images.unsplash.com/photo-1518091043644-c1d4457512c6">
-<p>Avrupa Transfer Sezonu Açıldı</p>
-</div>
-
-<div class="card">
-<img src="https://images.unsplash.com/photo-1508098682722-e99c643e7f51">
-<p>Premier League Rekor Bonservis</p>
-</div>
-
-<div class="card">
-<img src="https://images.unsplash.com/photo-1494774157365-9e04c6720e47">
-<p>Genç Yetenekler Yükseliyor</p>
-</div>
-</div>
-
-</div>
-
-<!-- SÜPER LİG -->
-<div id="superlig" class="section">
-<h2>Süper Lig Transferleri</h2>
-
-<div class="grid">
-
-<div class="card" onclick="showPlayer('osimhen')">
-<img src="https://images.unsplash.com/photo-1517927033932-b3d18e61fb3a">
-<p>Victor Osimhen</p>
-</div>
-
-<div class="card" onclick="showPlayer('torreira')">
-<img src="https://images.unsplash.com/photo-1508098682722-e99c643e7f51">
-<p>Lucas Torreira</p>
-</div>
-
-<div class="card" onclick="showPlayer('icardi')">
-<img src="https://images.unsplash.com/photo-1494774157365-9e04c6720e47">
-<p>Mauro Icardi</p>
-</div>
-
-</div>
-
-<div id="osimhen" class="player-detail">
-<h3>Victor Osimhen</h3>
-Yaş: 27<br>Uyruk: Nijerya<br>Pozisyon: Forvet<br>Bonservis: 70M €
-</div>
-
-<div id="torreira" class="player-detail">
-<h3>Lucas Torreira</h3>
-Yaş: 29<br>Uyruk: Uruguay<br>Pozisyon: Orta Saha<br>Bonservis: 15M €
-</div>
-
-<div id="icardi" class="player-detail">
-<h3>Mauro Icardi</h3>
-Yaş: 33<br>Uyruk: Arjantin<br>Pozisyon: Forvet<br>Bonservis: Serbest
-</div>
-
-</div>
-
-<!-- PREMIER LEAGUE -->
-<div id="premier" class="section">
-<h2>Premier League Transferleri</h2>
-
-<div class="grid">
-<div class="card" onclick="showPlayer('haaland')">
-<img src="https://images.unsplash.com/photo-1518091043644-c1d4457512c6">
-<p>Erling Haaland</p>
-</div>
-
-<div class="card" onclick="showPlayer('saka')">
-<img src="https://images.unsplash.com/photo-1494774157365-9e04c6720e47">
-<p>Bukayo Saka</p>
-</div>
-</div>
-
-<div id="haaland" class="player-detail">
-<h3>Erling Haaland</h3>
-Yaş: 25<br>Uyruk: Norveç<br>Pozisyon: Forvet<br>Bonservis: 100M €
-</div>
-
-<div id="saka" class="player-detail">
-<h3>Bukayo Saka</h3>
-Yaş: 24<br>Uyruk: İngiltere<br>Pozisyon: Kanat<br>Bonservis: 90M €
-</div>
+  <div class="transfer-card">
+    <img src="oyuncu_resmi.jpg" alt="Oyuncu">
+    <h3>Victor Osimhen</h3>
+    <div class="transfer-info">
+      Napoli
+      <div class="arrow">➡</div>
+      Galatasaray
+      <p>Bonservis: 45M €</p>
+    </div>
+  </div>
 
 </div>
 
