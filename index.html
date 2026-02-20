@@ -513,4 +513,35 @@ matchPhotos.forEach(m=>{
     <div class="gallery-caption">${m.caption}</div>
   `;
   galleryContainer.appendChild(card);
-});
+});const galleryContainer = document.querySelector(".gallery-container");
+
+// JSON'u fetch ile çek ve otomatik galeri oluştur
+async function loadMatchGallery() {
+  try {
+    const response = await fetch("matches.json"); // JSON dosya yolu
+    const matchPhotos = await response.json();
+    
+    // Mevcut galeriyi temizle
+    galleryContainer.innerHTML = "";
+
+    matchPhotos.forEach(m => {
+      const card = document.createElement("div");
+      card.className = "gallery-card";
+      card.innerHTML = `
+        <img src="${m.img}" alt="${m.caption}">
+        <div class="gallery-caption">${m.caption}</div>
+      `;
+      galleryContainer.appendChild(card);
+    });
+
+  } catch (error) {
+    console.error("Maç galerisi yüklenemedi:", error);
+    galleryContainer.innerHTML = "<p>Galeri yüklenemedi.</p>";
+  }
+}
+
+// Sayfa açıldığında yükle
+loadMatchGallery();
+
+// Opsiyonel: Belirli aralıklarla yenile (canlı maçlar için)
+setInterval(loadMatchGallery, 60000); // her 60 saniyede bir günceller
