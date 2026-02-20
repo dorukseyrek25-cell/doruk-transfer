@@ -3,90 +3,132 @@
 <head>
 <meta charset="UTF-8">
 <title>Doruk Global Transfer</title>
+
 <style>
 body {
     font-family: Arial;
-    background-color: #111;
-    color: white;
     margin: 0;
+    background: #0f0f0f;
+    color: white;
 }
+
 header {
-    background: #d40000;
+    background: #c40000;
     padding: 20px;
     text-align: center;
 }
+
 nav {
-    background: #222;
-    padding: 10px;
+    background: #1a1a1a;
+    padding: 15px;
     text-align: center;
 }
-nav a {
-    color: white;
+
+nav button {
     margin: 10px;
-    text-decoration: none;
+    padding: 10px 20px;
+    border: none;
+    background: #c40000;
+    color: white;
     font-weight: bold;
+    cursor: pointer;
+    border-radius: 5px;
 }
-nav a:hover {
-    color: #d40000;
+
+nav button:hover {
+    background: #ff0000;
 }
+
 .section {
     padding: 20px;
+    display: none;
 }
-.transfer-card {
-    background: #222;
+
+.card {
+    background: #1e1e1e;
     padding: 15px;
     margin: 15px 0;
     border-radius: 10px;
+    cursor: pointer;
 }
-h2 {
-    color: #ffcc00;
+
+.card:hover {
+    background: #2c2c2c;
 }
-footer {
-    background: #000;
-    padding: 15px;
-    text-align: center;
+
+.player-detail {
+    display: none;
+    padding: 20px;
+    background: #222;
+    margin-top: 20px;
+    border-radius: 10px;
 }
 </style>
+
+<script>
+function showSection(id) {
+    document.querySelectorAll('.section').forEach(sec => sec.style.display = "none");
+    document.getElementById(id).style.display = "block";
+}
+
+function showPlayer(id) {
+    document.querySelectorAll('.player-detail').forEach(det => det.style.display = "none");
+    document.getElementById(id).style.display = "block";
+}
+</script>
+
 </head>
 <body>
 
 <header>
-<h1>🌍 Doruk Global Transfer Merkezi</h1>
-<p>Dünya Futbolundaki Son Transferler</p>
+<h1>🌍 Doruk Transfer Merkezi</h1>
+<p>Dünya Transfer Haberleri</p>
 </header>
 
 <nav>
-<a href="#">Ana Sayfa</a>
-<a href="#">Süper Lig</a>
-<a href="#">Premier League</a>
-<a href="#">La Liga</a>
-<a href="#">Serie A</a>
-<a href="#">Genç Yetenekler</a>
+<button onclick="showSection('home')">Ana Sayfa</button>
+<button onclick="showSection('superlig')">Süper Lig</button>
+<button onclick="showSection('premier')">Premier League</button>
 </nav>
 
-<div class="section">
-<h2>🔥 Son Dakika Transferleri</h2>
+<div id="home" class="section" style="display:block;">
+<h2>🔥 Son Transferler</h2>
+<p>En güncel transfer haberleri burada!</p>
+</div>
 
-<div class="transfer-card">
+<div id="superlig" class="section">
+<h2>Süper Lig Transferleri</h2>
+
+<div class="card" onclick="showPlayer('osimhen')">
+Victor Osimhen
+</div>
+
+<div id="osimhen" class="player-detail">
 <h3>Victor Osimhen</h3>
-<p>Napoli → Galatasaray | Bonservis: 70M €</p>
+<p>Yaş: 27</p>
+<p>Uyruk: Nijerya</p>
+<p>Pozisyon: Forvet</p>
+<p>Bonservis: 70M €</p>
 </div>
 
-<div class="transfer-card">
-<h3>Kylian Mbappe</h3>
-<p>PSG → Real Madrid | Bonservis: Serbest</p>
 </div>
 
-<div class="transfer-card">
+<div id="premier" class="section">
+<h2>Premier League Transferleri</h2>
+
+<div class="card" onclick="showPlayer('haaland')">
+Erling Haaland
+</div>
+
+<div id="haaland" class="player-detail">
 <h3>Erling Haaland</h3>
-<p>Manchester City → Barcelona | İddia</p>
+<p>Yaş: 25</p>
+<p>Uyruk: Norveç</p>
+<p>Pozisyon: Forvet</p>
+<p>Bonservis: 100M €</p>
 </div>
 
 </div>
-
-<footer>
-© 2026 Doruk Transfer Merkezi | Tüm Hakları Saklıdır
-</footer>
 
 </body>
 </html>
