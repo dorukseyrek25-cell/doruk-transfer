@@ -5,75 +5,99 @@
 <title>Doruk Global Transfer</title>
 
 <style>
-body {
-    font-family: Arial;
-    margin: 0;
-    background: #0f0f0f;
-    color: white;
+body{
+    margin:0;
+    font-family:Arial;
+    background:#0e0e0e;
+    color:white;
 }
 
-header {
-    background: #c40000;
-    padding: 20px;
-    text-align: center;
+header{
+    background:#c40000;
+    padding:25px;
+    text-align:center;
 }
 
-nav {
-    background: #1a1a1a;
-    padding: 15px;
-    text-align: center;
+nav{
+    background:#1a1a1a;
+    padding:15px;
+    text-align:center;
 }
 
-nav button {
-    margin: 10px;
-    padding: 10px 20px;
-    border: none;
-    background: #c40000;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-    border-radius: 5px;
+nav button{
+    margin:5px;
+    padding:10px 15px;
+    border:none;
+    background:#c40000;
+    color:white;
+    cursor:pointer;
+    border-radius:5px;
+    font-weight:bold;
 }
 
-nav button:hover {
-    background: #ff0000;
+nav button:hover{
+    background:#ff0000;
 }
 
-.section {
-    padding: 20px;
-    display: none;
+.section{
+    display:none;
+    padding:20px;
 }
 
-.card {
-    background: #1e1e1e;
-    padding: 15px;
-    margin: 15px 0;
-    border-radius: 10px;
-    cursor: pointer;
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:15px;
 }
 
-.card:hover {
-    background: #2c2c2c;
+.card{
+    background:#1e1e1e;
+    padding:15px;
+    border-radius:10px;
+    cursor:pointer;
+    text-align:center;
 }
 
-.player-detail {
-    display: none;
-    padding: 20px;
-    background: #222;
-    margin-top: 20px;
-    border-radius: 10px;
+.card img{
+    width:100%;
+    height:150px;
+    object-fit:cover;
+    border-radius:8px;
+}
+
+.card:hover{
+    background:#2a2a2a;
+}
+
+.player-detail{
+    display:none;
+    margin-top:15px;
+    background:#222;
+    padding:15px;
+    border-radius:10px;
+}
+
+.hero{
+    background:url('https://images.unsplash.com/photo-1508098682722-e99c643e7f51') center/cover;
+    height:300px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    font-size:30px;
+    font-weight:bold;
 }
 </style>
 
 <script>
-function showSection(id) {
-    document.querySelectorAll('.section').forEach(sec => sec.style.display = "none");
-    document.getElementById(id).style.display = "block";
+function showSection(id){
+    document.querySelectorAll('.section').forEach(sec=>sec.style.display="none");
+    document.getElementById(id).style.display="block";
 }
 
-function showPlayer(id) {
-    document.querySelectorAll('.player-detail').forEach(det => det.style.display = "none");
-    document.getElementById(id).style.display = "block";
+function showPlayer(id){
+    document.querySelectorAll('.player-detail').forEach(det=>det.style.display="none");
+    document.getElementById(id).style.display="block";
 }
 </script>
 
@@ -81,51 +105,110 @@ function showPlayer(id) {
 <body>
 
 <header>
-<h1>🌍 Doruk Transfer Merkezi</h1>
-<p>Dünya Transfer Haberleri</p>
+<h1>🌍 Doruk Global Transfer Merkezi</h1>
 </header>
 
 <nav>
 <button onclick="showSection('home')">Ana Sayfa</button>
 <button onclick="showSection('superlig')">Süper Lig</button>
 <button onclick="showSection('premier')">Premier League</button>
+<button onclick="showSection('laliga')">La Liga</button>
+<button onclick="showSection('seriea')">Serie A</button>
+<button onclick="showSection('bundesliga')">Bundesliga</button>
+<button onclick="showSection('ligue1')">Ligue 1</button>
 </nav>
 
 <div id="home" class="section" style="display:block;">
-<h2>🔥 Son Transferler</h2>
-<p>En güncel transfer haberleri burada!</p>
+
+<div class="hero">
+SON DAKİKA TRANSFERLERİ
 </div>
 
+<h2>⚽ Dünya Futbolu</h2>
+
+<div class="grid">
+<div class="card">
+<img src="https://images.unsplash.com/photo-1518091043644-c1d4457512c6">
+<p>Avrupa Transfer Sezonu Açıldı</p>
+</div>
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1508098682722-e99c643e7f51">
+<p>Premier League Rekor Bonservis</p>
+</div>
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1494774157365-9e04c6720e47">
+<p>Genç Yetenekler Yükseliyor</p>
+</div>
+</div>
+
+</div>
+
+<!-- SÜPER LİG -->
 <div id="superlig" class="section">
 <h2>Süper Lig Transferleri</h2>
 
+<div class="grid">
+
 <div class="card" onclick="showPlayer('osimhen')">
-Victor Osimhen
+<img src="https://images.unsplash.com/photo-1517927033932-b3d18e61fb3a">
+<p>Victor Osimhen</p>
+</div>
+
+<div class="card" onclick="showPlayer('torreira')">
+<img src="https://images.unsplash.com/photo-1508098682722-e99c643e7f51">
+<p>Lucas Torreira</p>
+</div>
+
+<div class="card" onclick="showPlayer('icardi')">
+<img src="https://images.unsplash.com/photo-1494774157365-9e04c6720e47">
+<p>Mauro Icardi</p>
+</div>
+
 </div>
 
 <div id="osimhen" class="player-detail">
 <h3>Victor Osimhen</h3>
-<p>Yaş: 27</p>
-<p>Uyruk: Nijerya</p>
-<p>Pozisyon: Forvet</p>
-<p>Bonservis: 70M €</p>
+Yaş: 27<br>Uyruk: Nijerya<br>Pozisyon: Forvet<br>Bonservis: 70M €
+</div>
+
+<div id="torreira" class="player-detail">
+<h3>Lucas Torreira</h3>
+Yaş: 29<br>Uyruk: Uruguay<br>Pozisyon: Orta Saha<br>Bonservis: 15M €
+</div>
+
+<div id="icardi" class="player-detail">
+<h3>Mauro Icardi</h3>
+Yaş: 33<br>Uyruk: Arjantin<br>Pozisyon: Forvet<br>Bonservis: Serbest
 </div>
 
 </div>
 
+<!-- PREMIER LEAGUE -->
 <div id="premier" class="section">
 <h2>Premier League Transferleri</h2>
 
+<div class="grid">
 <div class="card" onclick="showPlayer('haaland')">
-Erling Haaland
+<img src="https://images.unsplash.com/photo-1518091043644-c1d4457512c6">
+<p>Erling Haaland</p>
+</div>
+
+<div class="card" onclick="showPlayer('saka')">
+<img src="https://images.unsplash.com/photo-1494774157365-9e04c6720e47">
+<p>Bukayo Saka</p>
+</div>
 </div>
 
 <div id="haaland" class="player-detail">
 <h3>Erling Haaland</h3>
-<p>Yaş: 25</p>
-<p>Uyruk: Norveç</p>
-<p>Pozisyon: Forvet</p>
-<p>Bonservis: 100M €</p>
+Yaş: 25<br>Uyruk: Norveç<br>Pozisyon: Forvet<br>Bonservis: 100M €
+</div>
+
+<div id="saka" class="player-detail">
+<h3>Bukayo Saka</h3>
+Yaş: 24<br>Uyruk: İngiltere<br>Pozisyon: Kanat<br>Bonservis: 90M €
 </div>
 
 </div>
