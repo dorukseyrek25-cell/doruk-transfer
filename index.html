@@ -1,154 +1,127 @@
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Futbol Transferleri</title>
-<style>
-body {
-    font-family: Arial, sans-serif;
-    margin:0;
-    background:#f2f2f2;
-    color:#333;
-}
-header {
-    background:#ffcc00;
-    padding:20px;
-    text-align:center;
-    font-size:24px;
-    font-weight:bold;
-}
-.container {
-    display:flex;
-    flex-wrap:wrap;
-    padding:20px;
-    gap:20px;
-    justify-content:center;
-}
-.card {
-    background:white;
-    width:250px;
-    border-radius:12px;
-    overflow:hidden;
-    box-shadow:0 2px 8px rgba(0,0,0,0.2);
-    cursor:pointer;
-    transition:0.3s;
-}
-.card:hover { transform:scale(1.05); }
-.card img { width:100%; height:150px; object-fit:cover; }
-.card-body { padding:10px; }
-.card-body h3 { margin:5px 0; font-size:18px; }
-.card-body p { margin:3px 0; font-size:14px; color:#555; }
-.modal {
-    display:none;
-    position:fixed;
-    top:0; left:0;
-    width:100%; height:100%;
-    background:rgba(0,0,0,0.7);
-    justify-content:center;
-    align-items:center;
-}
-.modal-content {
-    background:white;
-    padding:20px;
-    border-radius:12px;
-    width:90%;
-    max-width:500px;
-    text-align:left;
-}
-.modal-close {
-    float:right;
-    cursor:pointer;
-    font-size:18px;
-    font-weight:bold;
-}
-</style>
-</head>
-<body>
+import SwiftUI
 
-<header>Global Futbol Transferleri</header>
+// Model
+struct Transfer: Identifiable, Codable {
+    let id: Int
+    let name: String
+    let from: String
+    let to: String
+    let league: String
+    let imageURL: String
+}
 
-<div class="container" id="player-container">
-    <!-- Futbolcu kartları JS ile eklenecek -->
-</div>
+// Sample veri (sonradan GitHub JSON ile değiştirebilirsin)
+let sampleTransfers: [Transfer] = [
+    Transfer(id: 1, name: "Victor Osimhen", from: "Napoli", to: "Galatasaray", league: "Süper Lig", imageURL: "https://upload.wikimedia.org/wikipedia/commons/5/5f/Victor_Osimhen_2021.jpg"),
+    Transfer(id: 2, name: "Kylian Mbappe", from: "PSG", to: "Real Madrid", league: "La Liga", imageURL: "https://upload.wikimedia.org/wikipedia/commons/a/a8/Kylian_Mbapp%C3%A9_2022.jpg"),
+    Transfer(id: 3, name: "Erling Haaland", from: "Manchester City", to: "Real Madrid", league: "La Liga", imageURL: "https://upload.wikimedia.org/wikipedia/commons/0/0e/Erling_Haaland_2020.jpg")
+]
 
-<div class="modal" id="player-modal">
-    <div class="modal-content">
-        <span class="modal-close" onclick="closeModal()">×</span>
-        <div id="modal-body"></div>
-    </div>
-</div>
-
-<script>
-// Örnek futbolcu verisi
-const players = [
-    {
-        name:"Victor Osimhen",
-        clubFrom:"Napoli",
-        clubTo:"Galatasaray",
-        value:"€80M",
-        image:"https://upload.wikimedia.org/wikipedia/commons/5/5d/Victor_Osimhen_2022.jpg",
-        trophies:["Serie A","Coppa Italia"]
-    },
-    {
-        name:"Leroy Sané",
-        clubFrom:"Bayern Münih",
-        clubTo:"Galatasaray",
-        value:"€60M",
-        image:"https://upload.wikimedia.org/wikipedia/commons/f/f0/Leroy_Sane_2020.jpg",
-        trophies:["Bundesliga","DFB-Pokal"]
-    },
-    {
-        name:"Mohamed Salah",
-        clubFrom:"Liverpool",
-        clubTo:"Real Madrid",
-        value:"€100M",
-        image:"https://upload.wikimedia.org/wikipedia/commons/0/0c/Mohamed_Salah_2022.jpg",
-        trophies:["Premier League","Champions League"]
+// ContentView
+struct ContentView: View {
+    @State private var transfers: [Transfer] = sampleTransfers
+    @State private var selectedLeague: String = "All"
+    
+    var leagues: [String] {
+        let all = ["All"] + Set(transfers.map { $0.league }).sorted()
+        return Array(all)
     }
-];
 
-// Kartları oluştur
-const container = document.getElementById("player-container");
-players.forEach((p,i)=>{
-    const card = document.createElement("div");
-    card.className="card";
-    card.innerHTML=`
-        <img src="${p.image}" alt="${p.name}">
-        <div class="card-body">
-            <h3>${p.name}</h3>
-            <p>${p.clubFrom} → ${p.clubTo}</p>
-            <p>Değer: ${p.value}</p>
-        </div>
-    `;
-    card.onclick=()=>openModal(i);
-    container.appendChild(card);
-});
+    var filteredTransfers: [Transfer] {
+        if selectedLeague == "All" { return transfers }
+        return transfers.filter { $0.league == selectedLeague }
+    }
 
-// Modal açma
-const modal = document.getElementById("player-modal");
-const modalBody = document.getElementById("modal-body");
-function openModal(index){
-    const p = players[index];
-    modalBody.innerHTML=`
-        <h2>${p.name}</h2>
-        <img src="${p.image}" style="width:100%; height:auto; border-radius:12px; margin:10px 0;">
-        <p><strong>Transfer:</strong> ${p.clubFrom} → ${p.clubTo}</p>
-        <p><strong>Piyasa Değeri:</strong> ${p.value}</p>
-        <p><strong>Kupalar:</strong> ${p.trophies.join(", ")}</p>
-    `;
-    modal.style.display="flex";
+    var body: some View {
+        NavigationView {
+            VStack {
+                // Lig Seçici
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack {
+                        ForEach(leagues, id: \.self) { league in
+                            Text(league)
+                                .padding(8)
+                                .background(selectedLeague == league ? Color.yellow : Color.white.opacity(0.5))
+                                .cornerRadius(8)
+                                .onTapGesture { selectedLeague = league }
+                        }
+                    }
+                    .padding()
+                }
+                
+                // Transfer Listesi
+                List(filteredTransfers) { transfer in
+                    NavigationLink(destination: TransferDetailView(transfer: transfer)) {
+                        HStack {
+                            AsyncImage(url: URL(string: transfer.imageURL)) { image in
+                                image.resizable().scaledToFill()
+                            } placeholder: {
+                                Color.gray
+                            }
+                            .frame(width: 80, height: 80)
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                            
+                            VStack(alignment: .leading) {
+                                Text(transfer.name).bold()
+                                Text("\(transfer.from) → \(transfer.to)")
+                                    .font(.subheadline)
+                                    .foregroundColor(.gray)
+                                Text(transfer.league)
+                                    .font(.caption)
+                                    .foregroundColor(.blue)
+                            }
+                        }
+                    }
+                }
+                .refreshable {
+                    await fetchTransfers()
+                }
+            }
+            .background(LinearGradient(colors: [.red.opacity(0.2), .yellow.opacity(0.2)], startPoint: .top, endPoint: .bottom).ignoresSafeArea())
+            .navigationTitle("Transferler")
+        }
+    }
+    
+    // Örnek: GitHub JSON çekme
+    func fetchTransfers() async {
+        guard let url = URL(string: "https://raw.githubusercontent.com/kullaniciAdi/repoAdi/main/transfers.json") else { return }
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
+            let newTransfers = try JSONDecoder().decode([Transfer].self, from: data)
+            transfers = newTransfers
+        } catch {
+            print("Hata: \(error)")
+        }
+    }
 }
 
-// Modal kapatma
-function closeModal(){ modal.style.display="none"; }
-
-window.onclick = function(event){
-    if(event.target==modal) closeModal();
+// Transfer Detay Sayfası
+struct TransferDetailView: View {
+    let transfer: Transfer
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 10) {
+                AsyncImage(url: URL(string: transfer.imageURL)) { img in
+                    img.resizable().scaledToFit()
+                } placeholder: {
+                    Color.gray
+                }
+                .frame(height: 250)
+                .clipShape(RoundedRectangle(cornerRadius: 15))
+                
+                Text(transfer.name).font(.title).bold()
+                Text("\(transfer.from) → \(transfer.to)").font(.headline)
+                Text("Lig: \(transfer.league)").foregroundColor(.blue)
+            }
+            .padding()
+        }
+        .navigationTitle("Detay")
+    }
 }
-</script>
 
-</body>
-</html>
-
-. 
+// Preview
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+    }
+}
