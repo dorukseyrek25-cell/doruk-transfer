@@ -259,3 +259,34 @@
 </style>
 
 <div style="display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap; padding: 20px; background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); margin: 20px auto; max-width: 1100px; border-radius: 20px
+/* FİNAL SÜRÜM: MÜZİK & FUTBOL ARENASI ARKA PLANI */
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    color: white;
+    text-align: center;
+    /* Bu yeni arka plan: Bir futbol sahasının yeşilinden, neon sahne ışıklarına geçiş yapar */
+    background: 
+        linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), /* Üstüne bir karartma katmanı */
+        url('https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/A_football_match_in_progress%2C_2018.jpg/1024px-A_football_match_in_progress%2C_2018.jpg'), /* Gerçek bir stadyum fotoğrafı */
+        linear-gradient(45deg, #ff00cc, #3333ff, #00ffcc, #ffff00); /* Altta yatan renk cümbüşü */
+    background-blend-mode: overlay, normal, normal; /* Katmanları birbirine karıştırır */
+    background-size: cover;
+    background-attachment: fixed; /* Kaydırdıkça arka plan sabit kalır, bu da derinlik hissi verir */
+    animation: stadiumLights 10s infinite alternate; /* Renklerin sürekli değiştiği bir ışık şovu ekler */
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* Arka planın ışıklarının sürekli renk değiştirmesini sağlayan animasyon */
+@keyframes stadiumLights {
+    0% { filter: hue-rotate(0deg) brightness(1); }
+    50% { filter: hue-rotate(180deg) brightness(1.2); } /* Renkler döner ve parlaklık artar */
+    100% { filter: hue-rotate(360deg) brightness(1); }
+}
+
+/* Sitedeki tüm kutuların daha belirgin ve 'dolu' görünmesi için genel bir stil */
+section, div.game-card, div.player-container {
+    box-shadow: 0 0 40px rgba(0, 255, 204, 0.4); /* Kutuların etrafına neon yeşil bir parlama ekler */
+    border: 2px solid rgba(255, 255, 255, 0.1); /* Kenarlıkları daha belirgin yapar */
+}
