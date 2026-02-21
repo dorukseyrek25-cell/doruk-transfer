@@ -1,127 +1,71 @@
-import SwiftUI
-
-// Model
-struct Transfer: Identifiable, Codable {
-    let id: Int
-    let name: String
-    let from: String
-    let to: String
-    let league: String
-    let imageURL: String
-}
-
-// Sample veri (sonradan GitHub JSON ile değiştirebilirsin)
-let sampleTransfers: [Transfer] = [
-    Transfer(id: 1, name: "Victor Osimhen", from: "Napoli", to: "Galatasaray", league: "Süper Lig", imageURL: "https://upload.wikimedia.org/wikipedia/commons/5/5f/Victor_Osimhen_2021.jpg"),
-    Transfer(id: 2, name: "Kylian Mbappe", from: "PSG", to: "Real Madrid", league: "La Liga", imageURL: "https://upload.wikimedia.org/wikipedia/commons/a/a8/Kylian_Mbapp%C3%A9_2022.jpg"),
-    Transfer(id: 3, name: "Erling Haaland", from: "Manchester City", to: "Real Madrid", league: "La Liga", imageURL: "https://upload.wikimedia.org/wikipedia/commons/0/0e/Erling_Haaland_2020.jpg")
-]
-
-// ContentView
-struct ContentView: View {
-    @State private var transfers: [Transfer] = sampleTransfers
-    @State private var selectedLeague: String = "All"
+<section id="transfer-market" style="background-color: #ffffff; color: #1a3151; padding: 30px; margin: 50px auto; max-width: 1000px; border-radius: 8px; font-family: 'Arial', sans-serif; box-shadow: 0 4px 15px rgba(0,0,0,0.3); text-align: left;">
     
-    var leagues: [String] {
-        let all = ["All"] + Set(transfers.map { $0.league }).sorted()
-        return Array(all)
-    }
+    <div style="background-color: #1a3151; color: white; padding: 10px 20px; border-radius: 4px 4px 0 0; margin: -30px -30px 20px -30px;">
+        <h2 style="margin: 0; font-size: 1.5rem;">🌍 Global Müzik Piyasası Değerleri</h2>
+    </div>
 
-    var filteredTransfers: [Transfer] {
-        if selectedLeague == "All" { return transfers }
-        return transfers.filter { $0.league == selectedLeague }
-    }
+    <p style="font-size: 0.9rem; color: #666; margin-bottom: 20px;">*Bu liste müzik dünyasındaki sanatçıların "Popülerlik Değeri" üzerinden Transfermarkt stiliyle hazırlanmıştır.</p>
 
-    var body: some View {
-        NavigationView {
-            VStack {
-                // Lig Seçici
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack {
-                        ForEach(leagues, id: \.self) { league in
-                            Text(league)
-                                .padding(8)
-                                .background(selectedLeague == league ? Color.yellow : Color.white.opacity(0.5))
-                                .cornerRadius(8)
-                                .onTapGesture { selectedLeague = league }
-                        }
-                    }
-                    .padding()
-                }
-                
-                // Transfer Listesi
-                List(filteredTransfers) { transfer in
-                    NavigationLink(destination: TransferDetailView(transfer: transfer)) {
-                        HStack {
-                            AsyncImage(url: URL(string: transfer.imageURL)) { image in
-                                image.resizable().scaledToFill()
-                            } placeholder: {
-                                Color.gray
-                            }
-                            .frame(width: 80, height: 80)
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
-                            
-                            VStack(alignment: .leading) {
-                                Text(transfer.name).bold()
-                                Text("\(transfer.from) → \(transfer.to)")
-                                    .font(.subheadline)
-                                    .foregroundColor(.gray)
-                                Text(transfer.league)
-                                    .font(.caption)
-                                    .foregroundColor(.blue)
-                            }
-                        }
-                    }
-                }
-                .refreshable {
-                    await fetchTransfers()
-                }
-            }
-            .background(LinearGradient(colors: [.red.opacity(0.2), .yellow.opacity(0.2)], startPoint: .top, endPoint: .bottom).ignoresSafeArea())
-            .navigationTitle("Transferler")
-        }
-    }
-    
-    // Örnek: GitHub JSON çekme
-    func fetchTransfers() async {
-        guard let url = URL(string: "https://raw.githubusercontent.com/kullaniciAdi/repoAdi/main/transfers.json") else { return }
-        do {
-            let (data, _) = try await URLSession.shared.data(from: url)
-            let newTransfers = try JSONDecoder().decode([Transfer].self, from: data)
-            transfers = newTransfers
-        } catch {
-            print("Hata: \(error)")
-        }
-    }
-}
+    <table style="width: 100%; border-collapse: collapse; font-size: 0.95rem;">
+        <thead>
+            <tr style="background-color: #f2f5f7; border-bottom: 2px solid #1a3151;">
+                <th style="padding: 12px; text-align: center;">#</th>
+                <th style="padding: 12px; text-align: left;">Sanatçı / Tür</th>
+                <th style="padding: 12px; text-align: center;">Ülke</th>
+                <th style="padding: 12px; text-align: center;">Yaş</th>
+                <th style="padding: 12px; text-align: right;">Piyasa Değeri</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr style="border-bottom: 1px solid #dee2e6;">
+                <td style="padding: 12px; text-align: center; font-weight: bold;">1</td>
+                <td style="padding: 12px;">
+                    <div style="display: flex; align-items: center;">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Pioneer_CDJ-2000_Nexus_at_the_Nightclub.jpg/100px-Pioneer_CDJ-2000_Nexus_at_the_Nightclub.jpg" style="width: 35px; height: 35px; border-radius: 50%; margin-right: 10px; object-fit: cover;">
+                        <div>
+                            <div style="font-weight: bold; color: #084c9e;">The Weeknd</div>
+                            <div style="font-size: 0.8rem; color: #777;">Pop / R&B</div>
+                        </div>
+                    </div>
+                </td>
+                <td style="padding: 12px; text-align: center;">🇨🇦</td>
+                <td style="padding: 12px; text-align: center;">34</td>
+                <td style="padding: 12px; text-align: right; font-weight: bold; color: #1a3151;">105.00 m €</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #dee2e6; background-color: #f9f9f9;">
+                <td style="padding: 12px; text-align: center; font-weight: bold;">2</td>
+                <td style="padding: 12px;">
+                    <div style="display: flex; align-items: center;">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Koncert_Vrelo.jpg/100px-Koncert_Vrelo.jpg" style="width: 35px; height: 35px; border-radius: 50%; margin-right: 10px; object-fit: cover;">
+                        <div>
+                            <div style="font-weight: bold; color: #084c9e;">Taylor Swift</div>
+                            <div style="font-size: 0.8rem; color: #777;">Country / Pop</div>
+                        </div>
+                    </div>
+                </td>
+                <td style="padding: 12px; text-align: center;">🇺🇸</td>
+                <td style="padding: 12px; text-align: center;">34</td>
+                <td style="padding: 12px; text-align: right; font-weight: bold; color: #1a3151;">98.50 m €</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #dee2e6;">
+                <td style="padding: 12px; text-align: center; font-weight: bold;">3</td>
+                <td style="padding: 12px;">
+                    <div style="display: flex; align-items: center;">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Violin_in_case.jpg/100px-Violin_in_case.jpg" style="width: 35px; height: 35px; border-radius: 50%; margin-right: 10px; object-fit: cover;">
+                        <div>
+                            <div style="font-weight: bold; color: #084c9e;">Billie Eilish</div>
+                            <div style="font-size: 0.8rem; color: #777;">Alternative Pop</div>
+                        </div>
+                    </div>
+                </td>
+                <td style="padding: 12px; text-align: center;">🇺🇸</td>
+                <td style="padding: 12px; text-align: center;">22</td>
+                <td style="padding: 12px; text-align: right; font-weight: bold; color: #1a3151;">82.00 m €</td>
+            </tr>
+        </tbody>
+    </table>
 
-// Transfer Detay Sayfası
-struct TransferDetailView: View {
-    let transfer: Transfer
-    var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 10) {
-                AsyncImage(url: URL(string: transfer.imageURL)) { img in
-                    img.resizable().scaledToFit()
-                } placeholder: {
-                    Color.gray
-                }
-                .frame(height: 250)
-                .clipShape(RoundedRectangle(cornerRadius: 15))
-                
-                Text(transfer.name).font(.title).bold()
-                Text("\(transfer.from) → \(transfer.to)").font(.headline)
-                Text("Lig: \(transfer.league)").foregroundColor(.blue)
-            }
-            .padding()
-        }
-        .navigationTitle("Detay")
-    }
-}
-
-// Preview
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
-}
+    <div style="margin-top: 20px; text-align: center; border-top: 1px solid #dee2e6; padding-top: 15px;">
+        <button style="background-color: #1a3151; color: white; border: none; padding: 8px 20px; border-radius: 4px; cursor: pointer; font-weight: bold;">Tüm Sanatçıları Gör</button>
+    </div>
+</section>
