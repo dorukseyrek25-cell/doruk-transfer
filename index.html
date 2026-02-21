@@ -2,546 +2,153 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<title>Global Futbol Transfer & Maç Takip</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Futbol Transferleri</title>
 <style>
 body {
-  font-family: Arial, sans-serif;
-  background: url('https://images.unsplash.com/photo-1552346159-f7a2d5c4c93c?fit=crop&w=1350&q=80') no-repeat center center fixed;
-  background-size: cover;
-  color: #fff;
-  margin:0;
-  padding:0;
+    font-family: Arial, sans-serif;
+    margin:0;
+    background:#f2f2f2;
+    color:#333;
 }
-
 header {
-  text-align: center;
-  padding: 20px;
-  background-color: rgba(0,0,0,0.6);
+    background:#ffcc00;
+    padding:20px;
+    text-align:center;
+    font-size:24px;
+    font-weight:bold;
 }
-
-section {
-  padding: 20px;
-  background-color: rgba(0,0,0,0.4);
-  margin: 10px;
-  border-radius: 12px;
+.container {
+    display:flex;
+    flex-wrap:wrap;
+    padding:20px;
+    gap:20px;
+    justify-content:center;
 }
-
-.transfer-container, .league-list, .matches-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: center;
+.card {
+    background:white;
+    width:250px;
+    border-radius:12px;
+    overflow:hidden;
+    box-shadow:0 2px 8px rgba(0,0,0,0.2);
+    cursor:pointer;
+    transition:0.3s;
 }
-
-.transfer-card, .league-card, .match-card {
-  background: rgba(0,0,0,0.7);
-  border-radius: 12px;
-  padding: 15px;
-  text-align: center;
-  width: 220px;
-  cursor:pointer;
-  transition: 0.3s;
-}
-
-.transfer-card:hover, .league-card:hover {
-  transform: scale(1.05);
-}
-
-.transfer-card img {
-  width:100px;
-  height:100px;
-  border-radius:50%;
-  object-fit:cover;
-}
-
+.card:hover { transform:scale(1.05); }
+.card img { width:100%; height:150px; object-fit:cover; }
+.card-body { padding:10px; }
+.card-body h3 { margin:5px 0; font-size:18px; }
+.card-body p { margin:3px 0; font-size:14px; color:#555; }
 .modal {
-  display:none;
-  position: fixed;
-  z-index: 100;
-  left:0; top:0;
-  width:100%; height:100%;
-  background: rgba(0,0,0,0.9);
-  justify-content:center;
-  align-items:center;
+    display:none;
+    position:fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    background:rgba(0,0,0,0.7);
+    justify-content:center;
+    align-items:center;
 }
-
 .modal-content {
-  background:#111;
-  padding:20px;
-  border-radius:12px;
-  max-width:500px;
-  text-align:center;
+    background:white;
+    padding:20px;
+    border-radius:12px;
+    width:90%;
+    max-width:500px;
+    text-align:left;
 }
-
-.close-modal {
-  color:red;
-  float:right;
-  cursor:pointer;
-  font-size:20px;
+.modal-close {
+    float:right;
+    cursor:pointer;
+    font-size:18px;
+    font-weight:bold;
 }
-button {
-  padding:10px 20px;
-  margin:5px;
-  border:none;
-  border-radius:8px;
-  cursor:pointer;
-}
-#likeBtn {background-color:green; color:white;}
-#dislikeBtn {background-color:red; color:white;}
 </style>
 </head>
 <body>
 
-<header>
-  <h1>Global Futbol Transfer & Maç Takip</h1>
-</header>
+<header>Global Futbol Transferleri</header>
 
-<section id="world-leagues">
-  <h2>Ligler</h2>
-  <div class="league-list"></div>
-</section>
+<div class="container" id="player-container">
+    <!-- Futbolcu kartları JS ile eklenecek -->
+</div>
 
-<section id="league-transfers" style="display:none;">
-  <h2 id="league-title">Lig Transferleri</h2>
-  <div class="transfer-container"></div>
-</section>
-
-<section id="matches">
-  <h2>Dünya Maçları & Şampiyonlar Ligi</h2>
-  <div id="champions-league">
-    <h3>Şampiyonlar Ligi Son Durum</h3>
-    <div class="matches-container"></div>
-  </div>
-  <div id="world-matches">
-    <h3>Tüm Dünya Ligleri Maç Sonuçları</h3>
-    <div class="matches-container"></div>
-  </div>
-</section>
-
-<section id="support-us">
-  <h2>Bizi Destekler Misiniz?</h2>
-  <button id="likeBtn">Beğendim, Bildirim Al</button>
-  <button id="dislikeBtn">Beğenmedim, Engelle</button>
-</section>
-
-<!-- Modal -->
-<div id="playerModal" class="modal">
-  <div class="modal-content">
-    <span class="close-modal">&times;</span>
-    <div id="modal-body"></div>
-  </div>
+<div class="modal" id="player-modal">
+    <div class="modal-content">
+        <span class="modal-close" onclick="closeModal()">×</span>
+        <div id="modal-body"></div>
+    </div>
 </div>
 
 <script>
-// Örnek veri
-const leagues = [
-  {id:1, name:"Premier League", country:"İngiltere"},
-  {id:2, name:"La Liga", country:"İspanya"},
-  {id:3, name:"Serie A", country:"İtalya"},
+// Örnek futbolcu verisi
+const players = [
+    {
+        name:"Victor Osimhen",
+        clubFrom:"Napoli",
+        clubTo:"Galatasaray",
+        value:"€80M",
+        image:"https://upload.wikimedia.org/wikipedia/commons/5/5d/Victor_Osimhen_2022.jpg",
+        trophies:["Serie A","Coppa Italia"]
+    },
+    {
+        name:"Leroy Sané",
+        clubFrom:"Bayern Münih",
+        clubTo:"Galatasaray",
+        value:"€60M",
+        image:"https://upload.wikimedia.org/wikipedia/commons/f/f0/Leroy_Sane_2020.jpg",
+        trophies:["Bundesliga","DFB-Pokal"]
+    },
+    {
+        name:"Mohamed Salah",
+        clubFrom:"Liverpool",
+        clubTo:"Real Madrid",
+        value:"€100M",
+        image:"https://upload.wikimedia.org/wikipedia/commons/0/0c/Mohamed_Salah_2022.jpg",
+        trophies:["Premier League","Champions League"]
+    }
 ];
 
-const transfers = [
-  {player:"Victor Osimhen", from:"Napoli", to:"Galatasaray", value:"45M €", trophies:["Serie A 1x","Coppa Italia 1x"], league:"Serie A", image:"https://upload.wikimedia.org/wikipedia/commons/1/1b/Victor_Osimhen_2022.jpg", position:"Forvet", age:25, nationality:"Nijerya"},
-  {player:"Leroy Sané", from:"Bayern", to:"Manchester City", value:"60M €", trophies:["Bundesliga 2x","DFB Pokal 1x"], league:"Premier League", image:"https://upload.wikimedia.org/wikipedia/commons/7/77/Leroy_Sane_2020.jpg", position:"Kanat", age:28, nationality:"Almanya"}
-];
-
-const matches = [
-  {league:"Şampiyonlar Ligi", home:"Real Madrid", away:"Liverpool", score:"2-1"},
-  {league:"Premier League", home:"Manchester City", away:"Chelsea", score:"1-0"},
-];
-
-// Ligleri yükle
-const leagueList = document.querySelector(".league-list");
-leagues.forEach(l => {
-  const div = document.createElement("div");
-  div.className = "league-card";
-  div.textContent = l.name;
-  div.onclick = () => showTransfers(l.name);
-  leagueList.appendChild(div);
-});
-
-function showTransfers(leagueName){
-  document.getElementById("league-transfers").style.display="block";
-  document.getElementById("league-title").textContent=leagueName+" Transferleri";
-  const container = document.querySelector(".transfer-container");
-  container.innerHTML="";
-  
-  const filtered = transfers.filter(t => t.league === leagueName);
-  if(filtered.length===0){
-    container.innerHTML="<p>Bu ligde transfer bulunamadı.</p>";
-    return;
-  }
-
-  filtered.forEach(t => {
+// Kartları oluştur
+const container = document.getElementById("player-container");
+players.forEach((p,i)=>{
     const card = document.createElement("div");
-    card.className="transfer-card";
+    card.className="card";
     card.innerHTML=`
-      <img src="${t.image}" alt="${t.player}">
-      <h3>${t.player}</h3>
-      <p>${t.from} ➡ ${t.to}</p>
-      <p>Değer: ${t.value}</p>
-      <p>Kupalar: ${t.trophies.join(", ")}</p>
+        <img src="${p.image}" alt="${p.name}">
+        <div class="card-body">
+            <h3>${p.name}</h3>
+            <p>${p.clubFrom} → ${p.clubTo}</p>
+            <p>Değer: ${p.value}</p>
+        </div>
     `;
-    card.onclick = () => openModal(t);
+    card.onclick=()=>openModal(i);
     container.appendChild(card);
-  });
-}
+});
 
 // Modal açma
-const modal = document.getElementById("playerModal");
+const modal = document.getElementById("player-modal");
 const modalBody = document.getElementById("modal-body");
-const closeModal = document.querySelector(".close-modal");
-function openModal(player){
-  modalBody.innerHTML=`
-    <h2>${player.player}</h2>
-    <img src="${player.image}" width="150">
-    <p>Konum: ${player.position}</p>
-    <p>Yaş: ${player.age}</p>
-    <p>Milliyet: ${player.nationality}</p>
-    <p>Kupalar: ${player.trophies.join(", ")}</p>
-    <p>Eski Kulüp: ${player.from}</p>
-    <p>Yeni Kulüp: ${player.to}</p>
-    <p>Piyasa Değeri: ${player.value}</p>
-  `;
-  modal.style.display="flex";
-}
-
-closeModal.onclick = () => modal.style.display="none";
-window.onclick = e => { if(e.target==modal) modal.style.display="none"; }
-
-// Maçları yükle
-const matchContainers = document.querySelectorAll("#matches .matches-container");
-matches.forEach((m,i) => {
-  const div = document.createElement("div");
-  div.className="match-card";
-  div.textContent=`${m.league}: ${m.home} ${m.score} ${m.away}`;
-  matchContainers[i%2].appendChild(div);
-});
-
-// Bildirim butonları
-document.getElementById("likeBtn").onclick = () => alert("Bildirimler aktif!");
-document.getElementById("dislikeBtn").onclick = () => alert("Site engellendi!");
-</script>
-
-</body>
-</html>
-// Mevcut transfers array'inin içine ekle
-transfers.push(
-  {
-    player:"Victor Osimhen",
-    from:"Napoli",
-    to:"Galatasaray",
-    value:"45M €",
-    trophies:["Serie A 1x","Coppa Italia 1x"],
-    league:"Serie A",
-    image:"https://upload.wikimedia.org/wikipedia/commons/1/1b/Victor_Osimhen_2022.jpg",
-    position:"Forvet",
-    age:25,
-    nationality:"Nijerya"
-  },
-  {
-    player:"Leroy Sané",
-    from:"Bayern Münih",
-    to:"Manchester City",
-    value:"60M €",
-    trophies:["Bundesliga 2x","DFB Pokal 1x"],
-    league:"Premier League",
-    image:"https://upload.wikimedia.org/wikipedia/commons/7/77/Leroy_Sane_2020.jpg",
-    position:"Kanat",
-    age:28,
-    nationality:"Almanya"
-  }
-);
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-<meta charset="UTF-8">
-<title>Global Futbol Transfer & Maç Takip</title>
-<style>
-body {
-  font-family: Arial, sans-serif;
-  background: url('https://images.unsplash.com/photo-1552346159-f7a2d5c4c93c?fit=crop&w=1350&q=80') no-repeat center center fixed;
-  background-size: cover;
-  color: #fff;
-  margin:0; padding:0;
-}
-
-header { text-align:center; padding:20px; background: rgba(0,0,0,0.6);}
-section { padding:20px; background: rgba(0,0,0,0.4); margin:10px; border-radius:12px;}
-
-.transfer-container, .league-list, .matches-container, .favorites-container {
-  display:flex; flex-wrap:wrap; gap:20px; justify-content:center;
-}
-
-.transfer-card, .league-card, .match-card, .favorite-card {
-  background: rgba(0,0,0,0.7);
-  border-radius:12px; padding:15px; text-align:center;
-  width:220px; cursor:pointer; transition:0.3s; position:relative;
-}
-
-.transfer-card:hover, .league-card:hover { transform:scale(1.05);}
-.transfer-card:hover .tooltip { display:block;}
-
-.transfer-card img { width:100px; height:100px; border-radius:50%; object-fit:cover;}
-
-/* Tooltip */
-.tooltip {
-  display:none;
-  position:absolute; top:-5px; left:105%;
-  background:#222; padding:5px 10px; border-radius:8px; font-size:12px;
-  white-space: nowrap; z-index:10;
-}
-
-/* Modal */
-.modal { display:none; position: fixed; z-index:100; left:0; top:0; width:100%; height:100%; background: rgba(0,0,0,0.9); justify-content:center; align-items:center;}
-.modal-content { background:#111; padding:20px; border-radius:12px; max-width:500px; text-align:center;}
-.close-modal { color:red; float:right; cursor:pointer; font-size:20px; }
-button { padding:10px 20px; margin:5px; border:none; border-radius:8px; cursor:pointer;}
-#likeBtn {background-color:green; color:white;}
-#dislikeBtn {background-color:red; color:white;}
-</style>
-</head>
-<body>
-
-<header><h1>Global Futbol Transfer & Maç Takip</h1></header>
-
-<section id="world-leagues">
-  <h2>Ligler</h2>
-  <div class="league-list"></div>
-</section>
-
-<section id="league-transfers" style="display:none;">
-  <h2 id="league-title">Lig Transferleri</h2>
-  <div class="transfer-container"></div>
-</section>
-
-<section id="favorites" style="display:none;">
-  <h2>Favori Oyuncularım</h2>
-  <div class="favorites-container"></div>
-</section>
-
-<section id="matches">
-  <h2>Dünya Maçları & Şampiyonlar Ligi</h2>
-  <div id="champions-league">
-    <h3>Şampiyonlar Ligi Son Durum</h3>
-    <div class="matches-container"></div>
-  </div>
-  <div id="world-matches">
-    <h3>Tüm Dünya Ligleri Maç Sonuçları</h3>
-    <div class="matches-container"></div>
-  </div>
-</section>
-
-<section id="support-us">
-  <h2>Bizi Destekler Misiniz?</h2>
-  <button id="likeBtn">Beğendim, Bildirim Al</button>
-  <button id="dislikeBtn">Beğenmedim, Engelle</button>
-</section>
-
-<!-- Modal -->
-<div id="playerModal" class="modal">
-  <div class="modal-content">
-    <span class="close-modal">&times;</span>
-    <div id="modal-body"></div>
-  </div>
-</div>
-
-<script>
-// Veri
-const leagues = [
-  {id:1,name:"Premier League",country:"İngiltere"},
-  {id:2,name:"La Liga",country:"İspanya"},
-  {id:3,name:"Serie A",country:"İtalya"},
-];
-
-let transfers = [
-  {player:"Victor Osimhen", from:"Napoli", to:"Galatasaray", value:"45M €", trophies:["Serie A 1x","Coppa Italia 1x"], league:"Serie A", image:"https://upload.wikimedia.org/wikipedia/commons/1/1b/Victor_Osimhen_2022.jpg", position:"Forvet", age:25, nationality:"Nijerya"},
-  {player:"Leroy Sané", from:"Bayern Münih", to:"Manchester City", value:"60M €", trophies:["Bundesliga 2x","DFB Pokal 1x"], league:"Premier League", image:"https://upload.wikimedia.org/wikipedia/commons/7/77/Leroy_Sane_2020.jpg", position:"Kanat", age:28, nationality:"Almanya"},
-];
-
-// Ligleri göster
-const leagueList = document.querySelector(".league-list");
-leagues.forEach(l=>{
-  const div=document.createElement("div");
-  div.className="league-card";
-  div.textContent=l.name;
-  div.onclick=()=>showTransfers(l.name);
-  leagueList.appendChild(div);
-});
-
-// Transferleri göster
-function showTransfers(leagueName){
-  document.getElementById("league-transfers").style.display="block";
-  document.getElementById("league-title").textContent=leagueName+" Transferleri";
-  const container=document.querySelector(".transfer-container");
-  container.innerHTML="";
-  const filtered=transfers.filter(t=>t.league===leagueName);
-  if(filtered.length===0){ container.innerHTML="<p>Bu ligde transfer bulunamadı.</p>"; return; }
-  filtered.forEach(t=>{
-    const card=document.createElement("div");
-    card.className="transfer-card";
-    card.innerHTML=`
-      <img src="${t.image}" alt="${t.player}">
-      <h3>${t.player}</h3>
-      <p>${t.from} ➡ ${t.to}</p>
-      <p>Değer: ${t.value}</p>
-      <p>Kupalar: ${t.trophies.join(", ")}</p>
-      <div class="tooltip">Tıklayınca profili açılır!</div>
-      <button onclick="addFavorite('${t.player}')">Favorilere Ekle</button>
+function openModal(index){
+    const p = players[index];
+    modalBody.innerHTML=`
+        <h2>${p.name}</h2>
+        <img src="${p.image}" style="width:100%; height:auto; border-radius:12px; margin:10px 0;">
+        <p><strong>Transfer:</strong> ${p.clubFrom} → ${p.clubTo}</p>
+        <p><strong>Piyasa Değeri:</strong> ${p.value}</p>
+        <p><strong>Kupalar:</strong> ${p.trophies.join(", ")}</p>
     `;
-    card.onclick = (e)=>{ if(!e.target.matches("button")) openModal(t); };
-    container.appendChild(card);
-  });
+    modal.style.display="flex";
 }
 
-// Modal
-const modal=document.getElementById("playerModal");
-const modalBody=document.getElementById("modal-body");
-const closeModal=document.querySelector(".close-modal");
-function openModal(player){
-  modalBody.innerHTML=`
-    <h2>${player.player}</h2>
-    <img src="${player.image}" width="150">
-    <p>Konum: ${player.position}</p>
-    <p>Yaş: ${player.age}</p>
-    <p>Milliyet: ${player.nationality}</p>
-    <p>Kupalar: ${player.trophies.join(", ")}</p>
-    <p>Eski Kulüp: ${player.from}</p>
-    <p>Yeni Kulüp: ${player.to}</p>
-    <p>Piyasa Değeri: ${player.value}</p>
-  `;
-  modal.style.display="flex";
+// Modal kapatma
+function closeModal(){ modal.style.display="none"; }
+
+window.onclick = function(event){
+    if(event.target==modal) closeModal();
 }
-closeModal.onclick=()=>modal.style.display="none";
-window.onclick=e=>{if(e.target==modal) modal.style.display="none";}
-
-// Favorilere ekleme
-const favSection=document.getElementById("favorites");
-const favContainer=document.querySelector(".favorites-container");
-function addFavorite(name){
-  const player=transfers.find(t=>t.player===name);
-  if(!player) return;
-  favSection.style.display="block";
-  const card=document.createElement("div");
-  card.className="favorite-card";
-  card.innerHTML=`<img src="${player.image}" width="80"><h4>${player.player}</h4>`;
-  favContainer.appendChild(card);
-}
-
-// Örnek maç verileri
-const matches=[
-  {league:"Şampiyonlar Ligi", home:"Real Madrid", away:"Liverpool", score:"2-1"},
-  {league:"Premier League", home:"Manchester City", away:"Chelsea", score:"1-0"},
-];
-const matchContainers=document.querySelectorAll("#matches .matches-container");
-matches.forEach((m,i)=>{
-  const div=document.createElement("div");
-  div.className="match-card";
-  div.textContent=`${m.league}: ${m.home} ${m.score} ${m.away}`;
-  matchContainers[i%2].appendChild(div);
-});
-
-// Bildirim
-document.getElementById("likeBtn").onclick=()=>alert("Bildirimler aktif!");
-document.getElementById("dislikeBtn").onclick=()=>alert("Site engellendi!");
 </script>
 
 </body>
 </html>
-<section id="match-gallery">
-  <h2>Canlı Maç Özetleri</h2>
-  <div class="gallery-container"></div>
-</section>
-.gallery-container {
-  display:flex;
-  flex-wrap:wrap;
-  gap:20px;
-  justify-content:center;
-}
 
-.gallery-card {
-  position:relative;
-  width:250px;
-  border-radius:12px;
-  overflow:hidden;
-  cursor:pointer;
-  transition:0.3s;
-}
-
-.gallery-card img {
-  width:100%;
-  height:150px;
-  object-fit:cover;
-}
-
-.gallery-card:hover {
-  transform:scale(1.05);
-}
-
-.gallery-caption {
-  position:absolute;
-  bottom:0;
-  width:100%;
-  background:rgba(0,0,0,0.6);
-  color:#fff;
-  text-align:center;
-  padding:5px;
-  font-size:14px;
-}
-const galleryContainer=document.querySelector(".gallery-container");
-
-const matchPhotos=[
-  {
-    img:"https://upload.wikimedia.org/wikipedia/commons/3/36/Fenerbahce_2023.jpg",
-    caption:"Fenerbahçe 0-3 Maç Özeti"
-  },
-  {
-    img:"https://upload.wikimedia.org/wikipedia/commons/5/5d/Galatasaray_2023.jpg",
-    caption:"Galatasaray 5-2 Juventus"
-  },
-  {
-    img:"https://upload.wikimedia.org/wikipedia/commons/6/6f/Barcelona_Match.jpg",
-    caption:"Barcelona vs Real Madrid 2-1"
-  }
-];
-
-matchPhotos.forEach(m=>{
-  const card=document.createElement("div");
-  card.className="gallery-card";
-  card.innerHTML=`
-    <img src="${m.img}" alt="${m.caption}">
-    <div class="gallery-caption">${m.caption}</div>
-  `;
-  galleryContainer.appendChild(card);
-});const galleryContainer = document.querySelector(".gallery-container");
-
-// JSON'u fetch ile çek ve otomatik galeri oluştur
-async function loadMatchGallery() {
-  try {
-    const response = await fetch("matches.json"); // JSON dosya yolu
-    const matchPhotos = await response.json();
-    
-    // Mevcut galeriyi temizle
-    galleryContainer.innerHTML = "";
-
-    matchPhotos.forEach(m => {
-      const card = document.createElement("div");
-      card.className = "gallery-card";
-      card.innerHTML = `
-        <img src="${m.img}" alt="${m.caption}">
-        <div class="gallery-caption">${m.caption}</div>
-      `;
-      galleryContainer.appendChild(card);
-    });
-
-  } catch (error) {
-    console.error("Maç galerisi yüklenemedi:", error);
-    galleryContainer.innerHTML = "<p>Galeri yüklenemedi.</p>";
-  }
-}
-
-// Sayfa açıldığında yükle
-loadMatchGallery();
-
-// Opsiyonel: Belirli aralıklarla yenile (canlı maçlar için)
-setInterval(loadMatchGallery, 60000); // her 60 saniyede bir günceller
+. 
