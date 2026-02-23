@@ -4,36 +4,130 @@
 <meta charset="UTF-8">
 <title>D-Fit</title>
 <style>
-  body { font-family: Arial, sans-serif; background: #f2f2f2; text-align: center; padding: 50px; }
-  h1 { color: #2e7d32; }
-  input, button { padding: 10px; margin: 10px; font-size: 16px; }
-  #result { margin-top: 20px; font-size: 20px; color: #d32f2f; }
-  button { background-color: #2e7d32; color: white; border: none; cursor: pointer; border-radius: 5px; }
-  button:hover { background-color: #1b5e20; }
+  body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(to bottom, #a8e6cf, #dcedc1);
+    text-align: center;
+    margin: 0;
+    padding: 0;
+  }
+
+  header {
+    background-color: #2e7d32;
+    color: white;
+    padding: 20px 0;
+    font-size: 28px;
+    font-weight: bold;
+  }
+
+  nav {
+    margin: 20px 0;
+  }
+
+  nav button {
+    padding: 10px 20px;
+    margin: 0 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #4caf50;
+    color: white;
+  }
+
+  nav button:hover {
+    background-color: #388e3c;
+  }
+
+  section {
+    padding: 20px;
+  }
+
+  #home, #scan {
+    display: none;
+  }
+
+  input {
+    padding: 10px;
+    font-size: 16px;
+    width: 200px;
+    border-radius: 5px;
+    border: 1px solid #888;
+  }
+
+  #result {
+    margin-top: 20px;
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  footer {
+    margin-top: 40px;
+    font-size: 14px;
+    color: #555;
+  }
 </style>
 </head>
 <body>
-  <h1>D-Fit</h1>
-  <input type="text" id="barcode" placeholder="Barkod girin veya taratın">
+
+<header>D-Fit</header>
+
+<nav>
+  <button onclick="showHome()">Ana Sayfa</button>
+  <button onclick="showScan()">Barkod Tara / Yaz</button>
+</nav>
+
+<section id="home">
+  <h2>Hoşgeldiniz!</h2>
+  <p>D-Fit ile yiyecek ve içeceklerin sağlıklı olup olmadığını öğrenebilirsiniz.  
+  Barkodlarını tarayabilir veya manuel yazabilirsiniz.</p>
+  <p>Bu proje Doruk tarafından geliştirilmektedir. Amacımız sağlıklı beslenmeyi kolay takip edebilmek!</p>
+</section>
+
+<section id="scan">
+  <h2>Barkod Tara / Yaz</h2>
+  <input type="text" id="barcode" placeholder="Barkod girin veya tarayın">
   <button onclick="checkHealth()">TARA</button>
   <div id="result"></div>
+</section>
+
+<footer>© 2026 D-Fit. Sağlıklı yaşam için buradayız!</footer>
 
 <script>
   const products = {
     "8691234567890": {name:"Süt", health:85},
     "8690987654321": {name:"Peynir", health:75},
-    "8691122334455": {name:"Ekmek", health:60}
+    "8691122334455": {name:"Ekmek", health:60},
+    "8695566778899": {name:"Meyve Suyu", health:90}
   };
 
+  function showHome() {
+    document.getElementById('home').style.display = 'block';
+    document.getElementById('scan').style.display = 'none';
+  }
+
+  function showScan() {
+    document.getElementById('home').style.display = 'none';
+    document.getElementById('scan').style.display = 'block';
+    document.getElementById('result').textContent = '';
+  }
+
   function checkHealth() {
-    const code = document.getElementById("barcode").value;
+    const code = document.getElementById("barcode").value.trim();
     const output = document.getElementById("result");
     if (products[code]) {
-      output.textContent = products[code].name + " → Sağlıklılık: %" + products[code].health;
+      const health = products[code].health;
+      output.textContent = products[code].name + " → Sağlıklılık: %" + health;
+      output.style.color = health >= 75 ? "#2e7d32" : (health >= 50 ? "#fbc02d" : "#d32f2f");
     } else {
       output.textContent = "Ürün bulunamadı!";
+      output.style.color = "#d32f2f";
     }
   }
+
+  // Başlangıçta ana sayfa
+  showHome();
 </script>
+
 </body>
 </html>
