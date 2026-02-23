@@ -205,3 +205,27 @@
         <button onclick="closePayment()" style="background:none; border:none; color: #888; margin-top: 10px; cursor: pointer;">Vazgeç</button>
     </div>
 </div>
+<div id="payment-modal" style="display:none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(8px);">
+    <div class="google-modal" style="background: white; padding: 25px; border-radius: 20px; width: 350px; position: relative;">
+        <div id="payment-loading" style="display:none;">
+            <div class="loader"></div>
+            <p>Güvenli ödeme hattına bağlanılıyor...</p>
+        </div>
+
+        <div id="payment-form-content">
+            <h2 style="color: #333; margin-top:0;">👑 D-Fit Gold</h2>
+            <p style="color: #666; font-size: 14px;">Aylık Abonelik: <b>99.00 TL</b></p>
+            <hr>
+            <div style="text-align: left; margin: 15px 0;">
+                <label style="font-size: 12px; color: #888;">Kart Numarası</label>
+                <input type="text" class="google-input" placeholder="0000 0000 0000 0000" maxlength="16">
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" class="google-input" placeholder="AA/YY" maxlength="5">
+                    <input type="text" class="google-input" placeholder="CVV" maxlength="3">
+                </div>
+            </div>
+            <button class="btn-action" style="width: 100%; background: #2ED573; color: white;" onclick="processPayment()">99 TL ÖDE VE AKTİF ET</button>
+            <button onclick="closePayment()" style="background:none; border:none; color: #aaa; margin-top: 15px; cursor: pointer; font-size: 13px;">İşlemi İptal Et</button>
+        </div>
+    </div>
+</div>
