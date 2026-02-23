@@ -3,137 +3,134 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>D-Fit Pro</title>
+<title>D-Fit | Smart Health</title>
 <style>
-  :root { --primary: #2e7d32; --secondary: #4caf50; --bg: #f1f8e9; }
-  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin:0; background: var(--bg); color: #333; }
-  header { background: var(--primary); color: white; padding: 25px; text-align: center; font-size: 32px; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+  :root { --primary: #2e7d32; --accent: #ffd700; --bg: #f4f7f6; }
+  body { font-family: 'Segoe UI', sans-serif; margin:0; background: var(--bg); }
   
-  nav { display: flex; justify-content: center; gap: 10px; padding: 15px; sticky: top; background: white; }
-  nav button { padding: 12px 18px; border: none; border-radius: 25px; cursor: pointer; background: #e8f5e9; color: var(--primary); font-weight: 600; transition: 0.3s; }
-  nav button.active { background: var(--primary); color: white; }
-
-  section { padding: 30px 20px; display: none; max-width: 600px; margin: 20px auto; background: white; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); text-align: center; }
-  .active-section { display: block; animation: fadeIn 0.5s; }
-
-  /* Sağlık Barı Tasarımı */
-  .health-card { margin-top: 20px; padding: 20px; border-radius: 12px; border: 1px solid #eee; display: none; }
-  .progress-container { background: #eee; border-radius: 20px; height: 25px; margin: 15px 0; overflow: hidden; }
-  .progress-bar { height: 100%; width: 0%; transition: width 1s ease-in-out; }
-
-  video { border-radius: 12px; width: 100%; max-width: 400px; background: #000; margin-top: 15px; transform: scaleX(-1); }
+  /* Giriş Ekranı (Overlay) */
+  #login-screen { position: fixed; inset: 0; background: white; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; transition: 0.5s; }
+  .google-btn { background: #4285F4; color: white; padding: 12px 24px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
   
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-  footer { text-align: center; padding: 20px; color: #888; font-size: 13px; }
+  /* Ana Arayüz */
+  header { background: var(--primary); color: white; padding: 20px; text-align: center; font-size: 24px; }
+  nav { display: flex; justify-content: space-around; background: white; padding: 10px; border-bottom: 2px solid #ddd; }
+  nav button { background: none; border: none; font-weight: bold; color: #666; cursor: pointer; }
+  nav button.active { color: var(--primary); border-bottom: 2px solid var(--primary); }
+
+  section { display: none; padding: 20px; max-width: 500px; margin: auto; text-align: center; }
+  .active-section { display: block; animation: slideUp 0.4s ease; }
+
+  /* Kart Tasarımları */
+  .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-top: 20px; }
+  .new-product-form { display: none; border-top: 2px dashed #ccc; margin-top: 20px; padding-top: 20px; }
+  input { width: 80%; padding: 10px; margin: 5px 0; border: 1px solid #ddd; border-radius: 8px; }
+  
+  video { width: 100%; border-radius: 15px; background: #222; margin-bottom: 10px; }
+
+  @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 </style>
 </head>
 <body>
 
-<header>D-Fit</header>
+<div id="login-screen">
+  <h1 style="color: var(--primary);">D-Fit</h1>
+  <p>Sağlıklı yaşam serüvenine başla!</p>
+  <input type="text" id="userNameInput" placeholder="İsmini Yaz (Simülasyon)" style="text-align:center; margin-bottom:15px;">
+  <button class="google-btn" onclick="login()">G - Google ile Giriş Yap</button>
+  <p style="font-size: 12px; color: #888; margin-top: 20px;">*Demo sürümüdür</p>
+</div>
 
-<nav id="mainNav">
-  <button onclick="changeTab('home')" class="active">Ana Sayfa</button>
-  <button onclick="changeTab('scan')">Tarayıcı</button>
-  <button onclick="changeTab('tips')">Rehber</button>
+<header id="appHeader">D-Fit</header>
+
+<nav id="navbar" style="display:none;">
+  <button onclick="changeTab('home')" id="btn-home">Ev</button>
+  <button onclick="changeTab('scan')" id="btn-scan">Tarayıcı</button>
+  <button onclick="changeTab('history')" id="btn-history">Geçmiş</button>
 </nav>
 
-<section id="home" class="active-section">
-  <h2>Merhaba Doruk! 👋</h2>
-  <p>Bugün vücudun için ne kadar iyi bir seçim yapacaksın?</p>
-  <div style="font-size: 50px;">🍎</div>
+<section id="home">
+  <div class="card">
+    <h2 id="welcomeText">Merhaba!</h2>
+    <p>Bugün harika görünüyorsun. Hadi bir şeyler tarayalım!</p>
+  </div>
 </section>
 
 <section id="scan">
-  <h3>Ürün Barkodunu Okut</h3>
-  <video id="preview"></video>
-  <div style="margin-top:15px;">
-    <input type="text" id="barcode" placeholder="Barkod No" style="padding:10px; border-radius:5px; border:1px solid #ccc; width:60%;">
-    <button onclick="checkHealth()" style="padding:10px 20px; background: var(--primary); color:white; border:none; border-radius:5px;">Sorgula</button>
-  </div>
+  <div class="card">
+    <video id="preview"></video>
+    <input type="text" id="barcodeInput" placeholder="Barkod Manuel Gir">
+    <button onclick="checkProduct()" style="background: var(--primary); color:white; border:none; padding:10px 20px; border-radius:5px; margin-top:10px;">Analiz Et</button>
+    
+    <div id="resultArea"></div>
 
-  <div id="resultCard" class="health-card">
-    <h3 id="prodName">Ürün Adı</h3>
-    <div class="progress-container">
-      <div id="healthBar" class="progress-bar"></div>
+    <div id="addForm" class="new-product-form">
+      <h4 style="color:#d32f2f">Ups! Ürün Bulunamadı.</h4>
+      <p>Bu ürünü ilk sen eklemek ister misin?</p>
+      <input type="text" id="newProdName" placeholder="Ürün Adı (Örn: Dubai Roll)">
+      <input type="number" id="newProdHealth" placeholder="Sağlık Skoru (0-100)">
+      <button onclick="saveProduct()" style="background:#4285F4; color:white; border:none; padding:8px; width:85%; border-radius:5px;">Sisteme Kaydet</button>
     </div>
-    <p id="healthText" style="font-weight: bold;"></p>
   </div>
 </section>
-
-<section id="tips">
-  <h3>Günlük Sağlık İpuçları</h3>
-  <ul style="text-align: left; line-height: 2;">
-    <li>💧 <b>Su:</b> Günde 8 bardak.</li>
-    <li>🚶 <b>Hareket:</b> Her saat başı 5 dk esne.</li>
-    <li>🥗 <b>Tabak:</b> Yarısı sebze olsun.</li>
-  </ul>
-</section>
-
-<footer>© 2026 D-Fit | Doruk Labs</footer>
 
 <script src="https://unpkg.com/@zxing/library@latest"></script>
 <script>
-  const products = {
-    "8691234567890": {name:"Organik Süt", health:95},
-    "8690987654321": {name:"İşlenmiş Peynir", health:45},
-    "8691122334455": {name:"Beyaz Ekmek", health:55},
-    "12345": {name:"Test Elma", health:100}
-  };
-
+  let userName = "";
+  const products = { "8691234": {name:"Süt", health:90}, "1111": {name:"Elma", health:100} };
   const codeReader = new ZXing.BrowserBarcodeReader();
-  let currentStream = null;
 
-  function changeTab(tabId) {
-    // Sekme Görünürlüğü
-    document.querySelectorAll('section').forEach(s => s.classList.remove('active-section'));
-    document.getElementById(tabId).classList.add('active-section');
-    
-    // Buton Aktifliği
-    document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-    event.currentTarget.classList.add('active');
-
-    // Kamera Kontrolü (Sadece tarama sekmesinde aç)
-    if(tabId === 'scan') {
-      startScanner();
-    } else {
-      stopScanner();
-    }
+  function login() {
+    userName = document.getElementById('userNameInput').value || "Misafir";
+    document.getElementById('login-screen').style.opacity = '0';
+    setTimeout(() => {
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('navbar').style.display = 'flex';
+      document.getElementById('welcomeText').innerText = `Merhaba ${userName}! 👋`;
+      changeTab('home');
+    }, 500);
   }
 
-  function startScanner() {
-    codeReader.decodeFromVideoDevice(null, 'preview', (result, err) => {
-      if (result) {
-        document.getElementById('barcode').value = result.text;
-        checkHealth();
+  function changeTab(id) {
+    document.querySelectorAll('section').forEach(s => s.classList.remove('active-section'));
+    document.getElementById(id).classList.add('active-section');
+    if(id === 'scan') startCamera(); else codeReader.reset();
+  }
+
+  function startCamera() {
+    codeReader.decodeFromVideoDevice(null, 'preview', (result) => {
+      if(result) {
+        document.getElementById('barcodeInput').value = result.text;
+        checkProduct();
       }
     });
   }
 
-  function stopScanner() {
-    codeReader.reset();
+  function checkProduct() {
+    const code = document.getElementById('barcodeInput').value;
+    const res = document.getElementById('resultArea');
+    const form = document.getElementById('addForm');
+    
+    if(products[code]) {
+      form.style.display = "none";
+      const p = products[code];
+      res.innerHTML = `<h3>${p.name}</h3><p>Sağlık: %${p.health}</p>`;
+      res.style.color = p.health > 70 ? "green" : "red";
+    } else {
+      res.innerHTML = "";
+      form.style.display = "block"; // Bulunamayınca form açılır
+    }
   }
 
-  function checkHealth() {
-    const code = document.getElementById("barcode").value.trim();
-    const card = document.getElementById("resultCard");
-    const bar = document.getElementById("healthBar");
-    const text = document.getElementById("healthText");
-    const name = document.getElementById("prodName");
-
-    if(products[code]) {
-      const data = products[code];
-      card.style.display = "block";
-      name.innerText = data.name;
-      text.innerText = "Sağlık Puanı: %" + data.health;
-      
-      // Dinamik Bar Renklendirme ve Animasyon
-      bar.style.width = data.health + "%";
-      if(data.health >= 80) bar.style.backgroundColor = "#2e7d32";
-      else if(data.health >= 50) bar.style.backgroundColor = "#fbc02d";
-      else bar.style.backgroundColor = "#d32f2f";
-
-    } else {
-      alert("Ürün sistemde kayıtlı değil!");
+  function saveProduct() {
+    const code = document.getElementById('barcodeInput').value;
+    const name = document.getElementById('newProdName').value;
+    const health = document.getElementById('newProdHealth').value;
+    
+    if(name && health) {
+      products[code] = {name: name, health: health};
+      alert(`${name} başarıyla eklendi!`);
+      checkProduct();
     }
   }
 </script>
