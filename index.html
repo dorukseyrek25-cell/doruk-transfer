@@ -4,68 +4,15 @@
 <meta charset="UTF-8">
 <title>D-Fit</title>
 <style>
-  body {
-    font-family: 'Arial', sans-serif;
-    background: linear-gradient(to bottom, #a8e6cf, #dcedc1);
-    text-align: center;
-    margin: 0;
-    padding: 0;
-  }
-
-  header {
-    background-color: #2e7d32;
-    color: white;
-    padding: 20px 0;
-    font-size: 28px;
-    font-weight: bold;
-  }
-
-  nav {
-    margin: 20px 0;
-  }
-
-  nav button {
-    padding: 10px 20px;
-    margin: 0 10px;
-    font-size: 16px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    background-color: #4caf50;
-    color: white;
-  }
-
-  nav button:hover {
-    background-color: #388e3c;
-  }
-
-  section {
-    padding: 20px;
-  }
-
-  #home, #scan {
-    display: none;
-  }
-
-  input {
-    padding: 10px;
-    font-size: 16px;
-    width: 200px;
-    border-radius: 5px;
-    border: 1px solid #888;
-  }
-
-  #result {
-    margin-top: 20px;
-    font-size: 20px;
-    font-weight: bold;
-  }
-
-  footer {
-    margin-top: 40px;
-    font-size: 14px;
-    color: #555;
-  }
+  body { font-family: 'Arial', sans-serif; margin:0; padding:0; background: linear-gradient(to bottom, #a8e6cf, #dcedc1);}
+  header { background-color: #2e7d32; color:white; padding:20px; font-size:28px; text-align:center;}
+  nav { margin:20px; text-align:center;}
+  nav button { padding:10px 20px; margin:0 10px; font-size:16px; border:none; border-radius:5px; cursor:pointer; background-color:#4caf50; color:white;}
+  nav button:hover { background-color:#388e3c;}
+  section { padding:20px; display:none; text-align:center;}
+  input { padding:10px; font-size:16px; width:200px; border-radius:5px; border:1px solid #888;}
+  #result { margin-top:20px; font-size:20px; font-weight:bold;}
+  footer { margin-top:40px; font-size:14px; color:#555; text-align:center;}
 </style>
 </head>
 <body>
@@ -74,26 +21,41 @@
 
 <nav>
   <button onclick="showHome()">Ana Sayfa</button>
-  <button onclick="showScan()">Barkod Tara / Yaz</button>
+  <button onclick="showScan()">Barkod / QR Tara</button>
+  <button onclick="showTips()">Sağlık Rehberi</button>
 </nav>
 
 <section id="home">
   <h2>Hoşgeldiniz!</h2>
-  <p>D-Fit ile yiyecek ve içeceklerin sağlıklı olup olmadığını öğrenebilirsiniz.  
-  Barkodlarını tarayabilir veya manuel yazabilirsiniz.</p>
-  <p>Bu proje Doruk tarafından geliştirilmektedir. Amacımız sağlıklı beslenmeyi kolay takip edebilmek!</p>
+  <p>D-Fit ile yiyecek ve içeceklerin sağlıklı olup olmadığını öğrenebilirsiniz. Barkodlarını tarayabilir veya manuel yazabilirsiniz.</p>
+  <p>Projeyi Doruk geliştirdi. Amacımız sağlıklı yaşamı kolay takip edebilmek!</p>
 </section>
 
 <section id="scan">
-  <h2>Barkod Tara / Yaz</h2>
+  <h2>Barkod / QR Tara</h2>
   <input type="text" id="barcode" placeholder="Barkod girin veya tarayın">
   <button onclick="checkHealth()">TARA</button>
   <div id="result"></div>
+  <br>
+  <video id="preview" width="250" height="200" style="border:1px solid #888;"></video>
+</section>
+
+<section id="tips">
+  <h2>Sağlık Tavsiyeleri</h2>
+  <ul style="text-align:left; display:inline-block; margin-top:20px; font-size:18px;">
+    <li>Düzenli ve dengeli beslenin.</li>
+    <li>Günde en az 2 litre su için.</li>
+    <li>Her gün hareket edin, yürüyüş veya egzersiz yapın.</li>
+    <li>Yeterince uyuyun.</li>
+    <li>Abur cubur ve gazlı içecekleri sınırlayın.</li>
+  </ul>
 </section>
 
 <footer>© 2026 D-Fit. Sağlıklı yaşam için buradayız!</footer>
 
+<script src="https://unpkg.com/@zxing/library@latest"></script>
 <script>
+  // Ürün veritabanı
   const products = {
     "8691234567890": {name:"Süt", health:85},
     "8690987654321": {name:"Peynir", health:75},
@@ -101,28 +63,39 @@
     "8695566778899": {name:"Meyve Suyu", health:90}
   };
 
-  function showHome() {
-    document.getElementById('home').style.display = 'block';
-    document.getElementById('scan').style.display = 'none';
-  }
+  // Sayfa geçişleri
+  function showHome(){document.getElementById('home').style.display='block'; document.getElementById('scan').style.display='none'; document.getElementById('tips').style.display='none';}
+  function showScan(){document.getElementById('home').style.display='none'; document.getElementById('scan').style.display='block'; document.getElementById('tips').style.display='none'; startScanner();}
+  function showTips(){document.getElementById('home').style.display='none'; document.getElementById('scan').style.display='none'; document.getElementById('tips').style.display='block';}
 
-  function showScan() {
-    document.getElementById('home').style.display = 'none';
-    document.getElementById('scan').style.display = 'block';
-    document.getElementById('result').textContent = '';
-  }
-
-  function checkHealth() {
+  // Sağlık kontrolü
+  function checkHealth(){
     const code = document.getElementById("barcode").value.trim();
     const output = document.getElementById("result");
-    if (products[code]) {
+    if(products[code]){
       const health = products[code].health;
       output.textContent = products[code].name + " → Sağlıklılık: %" + health;
-      output.style.color = health >= 75 ? "#2e7d32" : (health >= 50 ? "#fbc02d" : "#d32f2f");
+      output.style.color = health>=75 ? "#2e7d32" : (health>=50 ? "#fbc02d" : "#d32f2f");
     } else {
       output.textContent = "Ürün bulunamadı!";
-      output.style.color = "#d32f2f";
+      output.style.color="#d32f2f";
     }
+  }
+
+  // QR / Barkod tarayıcı
+  let selectedDeviceId;
+  const codeReader = new ZXing.BrowserBarcodeReader();
+  function startScanner(){
+    const preview = document.getElementById('preview');
+    codeReader.getVideoInputDevices().then((videoInputDevices)=>{
+      selectedDeviceId = videoInputDevices[0].deviceId;
+      codeReader.decodeFromVideoDevice(selectedDeviceId, preview, (result, err)=>{
+        if(result){
+          document.getElementById('barcode').value=result.text;
+          checkHealth();
+        }
+      });
+    }).catch(err=>console.error(err));
   }
 
   // Başlangıçta ana sayfa
