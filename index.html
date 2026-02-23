@@ -2,122 +2,140 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<title>D-Fit</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>D-Fit Pro</title>
 <style>
-  body { font-family:'Arial'; margin:0; padding:0; background: linear-gradient(to bottom, #a8e6cf, #dcedc1);}
-  header { background-color:#2e7d32; color:white; padding:20px; font-size:28px; text-align:center;}
-  nav { margin:20px; text-align:center;}
-  nav button { padding:10px 20px; margin:0 10px; font-size:16px; border:none; border-radius:5px; cursor:pointer; background-color:#4caf50; color:white;}
-  nav button:hover { background-color:#388e3c;}
-  section { padding:20px; display:none; text-align:center; max-width:800px; margin:auto;}
-  input { padding:10px; font-size:16px; width:200px; border-radius:5px; border:1px solid #888;}
-  #result { margin-top:20px; font-size:20px; font-weight:bold;}
-  .btn-like, .btn-dislike, .btn-notify { padding:10px 15px; margin:5px; border:none; border-radius:5px; cursor:pointer;}
-  .btn-like { background-color:#2e7d32; color:white;}
-  .btn-like:hover { background-color:#1b5e20;}
-  .btn-dislike { background-color:#d32f2f; color:white;}
-  .btn-dislike:hover { background-color:#9a0007;}
-  .btn-notify { background-color:#fbc02d; color:white;}
-  .btn-notify:hover { background-color:#f57f17;}
-  footer { margin-top:40px; font-size:14px; color:#555; text-align:center;}
-  ul { text-align:left; display:inline-block; margin-top:20px; font-size:18px;}
-  video { border:1px solid #888; margin-top:10px; }
+  :root { --primary: #2e7d32; --secondary: #4caf50; --bg: #f1f8e9; }
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin:0; background: var(--bg); color: #333; }
+  header { background: var(--primary); color: white; padding: 25px; text-align: center; font-size: 32px; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+  
+  nav { display: flex; justify-content: center; gap: 10px; padding: 15px; sticky: top; background: white; }
+  nav button { padding: 12px 18px; border: none; border-radius: 25px; cursor: pointer; background: #e8f5e9; color: var(--primary); font-weight: 600; transition: 0.3s; }
+  nav button.active { background: var(--primary); color: white; }
+
+  section { padding: 30px 20px; display: none; max-width: 600px; margin: 20px auto; background: white; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); text-align: center; }
+  .active-section { display: block; animation: fadeIn 0.5s; }
+
+  /* Sağlık Barı Tasarımı */
+  .health-card { margin-top: 20px; padding: 20px; border-radius: 12px; border: 1px solid #eee; display: none; }
+  .progress-container { background: #eee; border-radius: 20px; height: 25px; margin: 15px 0; overflow: hidden; }
+  .progress-bar { height: 100%; width: 0%; transition: width 1s ease-in-out; }
+
+  video { border-radius: 12px; width: 100%; max-width: 400px; background: #000; margin-top: 15px; transform: scaleX(-1); }
+  
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  footer { text-align: center; padding: 20px; color: #888; font-size: 13px; }
 </style>
 </head>
 <body>
 
 <header>D-Fit</header>
 
-<nav>
-  <button onclick="showHome()">Ana Sayfa</button>
-  <button onclick="showScan()">Barkod / QR Tara</button>
-  <button onclick="showTips()">Sağlık Rehberi</button>
-  <button onclick="showShare()">Paylaş / Bildirim</button>
+<nav id="mainNav">
+  <button onclick="changeTab('home')" class="active">Ana Sayfa</button>
+  <button onclick="changeTab('scan')">Tarayıcı</button>
+  <button onclick="changeTab('tips')">Rehber</button>
 </nav>
 
-<section id="home">
-  <h2>Hoşgeldiniz!</h2>
-  <p>D-Fit ile yiyecek ve içeceklerin sağlıklı olup olmadığını öğrenebilirsiniz. Barkodları tarayabilir veya manuel yazabilirsiniz.</p>
-  <p>Bu proje Doruk tarafından geliştirilmektedir. Amacımız sağlıklı yaşamı kolay takip edebilmek!</p>
-  <p>Destek olmak istiyorsanız beğen butonuna basın veya bildirimleri açın. Beğenmediyseniz beğenmedim diyebilirsiniz 🙂</p>
+<section id="home" class="active-section">
+  <h2>Merhaba Doruk! 👋</h2>
+  <p>Bugün vücudun için ne kadar iyi bir seçim yapacaksın?</p>
+  <div style="font-size: 50px;">🍎</div>
 </section>
 
 <section id="scan">
-  <h2>Barkod / QR Tara</h2>
-  <input type="text" id="barcode" placeholder="Barkod girin veya tarayın">
-  <button onclick="checkHealth()">TARA</button>
-  <div id="result"></div>
-  <video id="preview" width="250" height="200"></video>
+  <h3>Ürün Barkodunu Okut</h3>
+  <video id="preview"></video>
+  <div style="margin-top:15px;">
+    <input type="text" id="barcode" placeholder="Barkod No" style="padding:10px; border-radius:5px; border:1px solid #ccc; width:60%;">
+    <button onclick="checkHealth()" style="padding:10px 20px; background: var(--primary); color:white; border:none; border-radius:5px;">Sorgula</button>
+  </div>
+
+  <div id="resultCard" class="health-card">
+    <h3 id="prodName">Ürün Adı</h3>
+    <div class="progress-container">
+      <div id="healthBar" class="progress-bar"></div>
+    </div>
+    <p id="healthText" style="font-weight: bold;"></p>
+  </div>
 </section>
 
 <section id="tips">
-  <h2>Sağlık Tavsiyeleri</h2>
-  <ul>
-    <li>Dengeli ve düzenli beslenin.</li>
-    <li>Günde en az 2 litre su için.</li>
-    <li>Her gün yürüyüş veya egzersiz yapın.</li>
-    <li>Yeterince uyuyun.</li>
-    <li>Abur cubur ve gazlı içecekleri sınırlayın.</li>
-    <li>Arkadaşlarınızla sağlıklı yaşamı paylaşın.</li>
+  <h3>Günlük Sağlık İpuçları</h3>
+  <ul style="text-align: left; line-height: 2;">
+    <li>💧 <b>Su:</b> Günde 8 bardak.</li>
+    <li>🚶 <b>Hareket:</b> Her saat başı 5 dk esne.</li>
+    <li>🥗 <b>Tabak:</b> Yarısı sebze olsun.</li>
   </ul>
 </section>
 
-<section id="share">
-  <h2>Beğeni & Bildirim</h2>
-  <button class="btn-like" onclick="alert('Beğendiniz! Teşekkürler 😎')">Beğendim</button>
-  <button class="btn-dislike" onclick="alert('Beğenmediniz 😕')">Beğenmedim</button>
-  <button class="btn-notify" onclick="alert('Bildirimler aktif edildi 🔔')">Bildirimleri Aç</button>
-  <p style="margin-top:20px;">Arkadaşlarınıza D-Fit’i paylaşabilirsiniz! <a href="#">Paylaş</a></p>
-</section>
-
-<footer>© 2026 D-Fit. Yakında Play Store'da yayında!</footer>
+<footer>© 2026 D-Fit | Doruk Labs</footer>
 
 <script src="https://unpkg.com/@zxing/library@latest"></script>
 <script>
   const products = {
-    "8691234567890": {name:"Süt", health:85},
-    "8690987654321": {name:"Peynir", health:75},
-    "8691122334455": {name:"Ekmek", health:60},
-    "8695566778899": {name:"Meyve Suyu", health:90}
+    "8691234567890": {name:"Organik Süt", health:95},
+    "8690987654321": {name:"İşlenmiş Peynir", health:45},
+    "8691122334455": {name:"Beyaz Ekmek", health:55},
+    "12345": {name:"Test Elma", health:100}
   };
 
-  function showHome(){document.getElementById('home').style.display='block'; document.getElementById('scan').style.display='none'; document.getElementById('tips').style.display='none'; document.getElementById('share').style.display='none';}
-  function showScan(){document.getElementById('home').style.display='none'; document.getElementById('scan').style.display='block'; document.getElementById('tips').style.display='none'; document.getElementById('share').style.display='none'; startScanner();}
-  function showTips(){document.getElementById('home').style.display='none'; document.getElementById('scan').style.display='none'; document.getElementById('tips').style.display='block'; document.getElementById('share').style.display='none';}
-  function showShare(){document.getElementById('home').style.display='none'; document.getElementById('scan').style.display='none'; document.getElementById('tips').style.display='none'; document.getElementById('share').style.display='block';}
+  const codeReader = new ZXing.BrowserBarcodeReader();
+  let currentStream = null;
 
-  function checkHealth(){
-    const code = document.getElementById("barcode").value.trim();
-    const output = document.getElementById("result");
-    if(products[code]){
-      const health = products[code].health;
-      output.textContent = products[code].name + " → Sağlıklılık: %" + health;
-      output.style.color = health>=75 ? "#2e7d32" : (health>=50 ? "#fbc02d" : "#d32f2f");
+  function changeTab(tabId) {
+    // Sekme Görünürlüğü
+    document.querySelectorAll('section').forEach(s => s.classList.remove('active-section'));
+    document.getElementById(tabId).classList.add('active-section');
+    
+    // Buton Aktifliği
+    document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+
+    // Kamera Kontrolü (Sadece tarama sekmesinde aç)
+    if(tabId === 'scan') {
+      startScanner();
     } else {
-      output.textContent = "Ürün bulunamadı!";
-      output.style.color="#d32f2f";
+      stopScanner();
     }
   }
 
-  // QR / Barkod Tarayıcı
-  let selectedDeviceId;
-  const codeReader = new ZXing.BrowserBarcodeReader();
-  function startScanner(){
-    const preview = document.getElementById('preview');
-    codeReader.getVideoInputDevices().then((videoInputDevices)=>{
-      selectedDeviceId = videoInputDevices[0].deviceId;
-      codeReader.decodeFromVideoDevice(selectedDeviceId, preview, (result, err)=>{
-        if(result){
-          document.getElementById('barcode').value=result.text;
-          checkHealth();
-        }
-      });
-    }).catch(err=>console.error(err));
+  function startScanner() {
+    codeReader.decodeFromVideoDevice(null, 'preview', (result, err) => {
+      if (result) {
+        document.getElementById('barcode').value = result.text;
+        checkHealth();
+      }
+    });
   }
 
-  // Başlangıçta ana sayfa
-  showHome();
-</script>
+  function stopScanner() {
+    codeReader.reset();
+  }
 
+  function checkHealth() {
+    const code = document.getElementById("barcode").value.trim();
+    const card = document.getElementById("resultCard");
+    const bar = document.getElementById("healthBar");
+    const text = document.getElementById("healthText");
+    const name = document.getElementById("prodName");
+
+    if(products[code]) {
+      const data = products[code];
+      card.style.display = "block";
+      name.innerText = data.name;
+      text.innerText = "Sağlık Puanı: %" + data.health;
+      
+      // Dinamik Bar Renklendirme ve Animasyon
+      bar.style.width = data.health + "%";
+      if(data.health >= 80) bar.style.backgroundColor = "#2e7d32";
+      else if(data.health >= 50) bar.style.backgroundColor = "#fbc02d";
+      else bar.style.backgroundColor = "#d32f2f";
+
+    } else {
+      alert("Ürün sistemde kayıtlı değil!");
+    }
+  }
+</script>
 </body>
 </html>
