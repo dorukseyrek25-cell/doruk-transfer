@@ -4,15 +4,24 @@
 <meta charset="UTF-8">
 <title>D-Fit</title>
 <style>
-  body { font-family: 'Arial', sans-serif; margin:0; padding:0; background: linear-gradient(to bottom, #a8e6cf, #dcedc1);}
-  header { background-color: #2e7d32; color:white; padding:20px; font-size:28px; text-align:center;}
+  body { font-family:'Arial'; margin:0; padding:0; background: linear-gradient(to bottom, #a8e6cf, #dcedc1);}
+  header { background-color:#2e7d32; color:white; padding:20px; font-size:28px; text-align:center;}
   nav { margin:20px; text-align:center;}
   nav button { padding:10px 20px; margin:0 10px; font-size:16px; border:none; border-radius:5px; cursor:pointer; background-color:#4caf50; color:white;}
   nav button:hover { background-color:#388e3c;}
-  section { padding:20px; display:none; text-align:center;}
+  section { padding:20px; display:none; text-align:center; max-width:800px; margin:auto;}
   input { padding:10px; font-size:16px; width:200px; border-radius:5px; border:1px solid #888;}
   #result { margin-top:20px; font-size:20px; font-weight:bold;}
+  .btn-like, .btn-dislike, .btn-notify { padding:10px 15px; margin:5px; border:none; border-radius:5px; cursor:pointer;}
+  .btn-like { background-color:#2e7d32; color:white;}
+  .btn-like:hover { background-color:#1b5e20;}
+  .btn-dislike { background-color:#d32f2f; color:white;}
+  .btn-dislike:hover { background-color:#9a0007;}
+  .btn-notify { background-color:#fbc02d; color:white;}
+  .btn-notify:hover { background-color:#f57f17;}
   footer { margin-top:40px; font-size:14px; color:#555; text-align:center;}
+  ul { text-align:left; display:inline-block; margin-top:20px; font-size:18px;}
+  video { border:1px solid #888; margin-top:10px; }
 </style>
 </head>
 <body>
@@ -23,12 +32,14 @@
   <button onclick="showHome()">Ana Sayfa</button>
   <button onclick="showScan()">Barkod / QR Tara</button>
   <button onclick="showTips()">Sağlık Rehberi</button>
+  <button onclick="showShare()">Paylaş / Bildirim</button>
 </nav>
 
 <section id="home">
   <h2>Hoşgeldiniz!</h2>
-  <p>D-Fit ile yiyecek ve içeceklerin sağlıklı olup olmadığını öğrenebilirsiniz. Barkodlarını tarayabilir veya manuel yazabilirsiniz.</p>
-  <p>Projeyi Doruk geliştirdi. Amacımız sağlıklı yaşamı kolay takip edebilmek!</p>
+  <p>D-Fit ile yiyecek ve içeceklerin sağlıklı olup olmadığını öğrenebilirsiniz. Barkodları tarayabilir veya manuel yazabilirsiniz.</p>
+  <p>Bu proje Doruk tarafından geliştirilmektedir. Amacımız sağlıklı yaşamı kolay takip edebilmek!</p>
+  <p>Destek olmak istiyorsanız beğen butonuna basın veya bildirimleri açın. Beğenmediyseniz beğenmedim diyebilirsiniz 🙂</p>
 </section>
 
 <section id="scan">
@@ -36,26 +47,33 @@
   <input type="text" id="barcode" placeholder="Barkod girin veya tarayın">
   <button onclick="checkHealth()">TARA</button>
   <div id="result"></div>
-  <br>
-  <video id="preview" width="250" height="200" style="border:1px solid #888;"></video>
+  <video id="preview" width="250" height="200"></video>
 </section>
 
 <section id="tips">
   <h2>Sağlık Tavsiyeleri</h2>
-  <ul style="text-align:left; display:inline-block; margin-top:20px; font-size:18px;">
-    <li>Düzenli ve dengeli beslenin.</li>
+  <ul>
+    <li>Dengeli ve düzenli beslenin.</li>
     <li>Günde en az 2 litre su için.</li>
-    <li>Her gün hareket edin, yürüyüş veya egzersiz yapın.</li>
+    <li>Her gün yürüyüş veya egzersiz yapın.</li>
     <li>Yeterince uyuyun.</li>
     <li>Abur cubur ve gazlı içecekleri sınırlayın.</li>
+    <li>Arkadaşlarınızla sağlıklı yaşamı paylaşın.</li>
   </ul>
 </section>
 
-<footer>© 2026 D-Fit. Sağlıklı yaşam için buradayız!</footer>
+<section id="share">
+  <h2>Beğeni & Bildirim</h2>
+  <button class="btn-like" onclick="alert('Beğendiniz! Teşekkürler 😎')">Beğendim</button>
+  <button class="btn-dislike" onclick="alert('Beğenmediniz 😕')">Beğenmedim</button>
+  <button class="btn-notify" onclick="alert('Bildirimler aktif edildi 🔔')">Bildirimleri Aç</button>
+  <p style="margin-top:20px;">Arkadaşlarınıza D-Fit’i paylaşabilirsiniz! <a href="#">Paylaş</a></p>
+</section>
+
+<footer>© 2026 D-Fit. Yakında Play Store'da yayında!</footer>
 
 <script src="https://unpkg.com/@zxing/library@latest"></script>
 <script>
-  // Ürün veritabanı
   const products = {
     "8691234567890": {name:"Süt", health:85},
     "8690987654321": {name:"Peynir", health:75},
@@ -63,12 +81,11 @@
     "8695566778899": {name:"Meyve Suyu", health:90}
   };
 
-  // Sayfa geçişleri
-  function showHome(){document.getElementById('home').style.display='block'; document.getElementById('scan').style.display='none'; document.getElementById('tips').style.display='none';}
-  function showScan(){document.getElementById('home').style.display='none'; document.getElementById('scan').style.display='block'; document.getElementById('tips').style.display='none'; startScanner();}
-  function showTips(){document.getElementById('home').style.display='none'; document.getElementById('scan').style.display='none'; document.getElementById('tips').style.display='block';}
+  function showHome(){document.getElementById('home').style.display='block'; document.getElementById('scan').style.display='none'; document.getElementById('tips').style.display='none'; document.getElementById('share').style.display='none';}
+  function showScan(){document.getElementById('home').style.display='none'; document.getElementById('scan').style.display='block'; document.getElementById('tips').style.display='none'; document.getElementById('share').style.display='none'; startScanner();}
+  function showTips(){document.getElementById('home').style.display='none'; document.getElementById('scan').style.display='none'; document.getElementById('tips').style.display='block'; document.getElementById('share').style.display='none';}
+  function showShare(){document.getElementById('home').style.display='none'; document.getElementById('scan').style.display='none'; document.getElementById('tips').style.display='none'; document.getElementById('share').style.display='block';}
 
-  // Sağlık kontrolü
   function checkHealth(){
     const code = document.getElementById("barcode").value.trim();
     const output = document.getElementById("result");
@@ -82,7 +99,7 @@
     }
   }
 
-  // QR / Barkod tarayıcı
+  // QR / Barkod Tarayıcı
   let selectedDeviceId;
   const codeReader = new ZXing.BrowserBarcodeReader();
   function startScanner(){
