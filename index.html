@@ -3,92 +3,145 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>D-Fit | Smart Health</title>
+<title>D-Fit | Smart Health AI</title>
 <style>
-  :root { --primary: #2e7d32; --accent: #ffd700; --bg: #f4f7f6; }
-  body { font-family: 'Segoe UI', sans-serif; margin:0; background: var(--bg); }
-  
-  /* Giriş Ekranı (Overlay) */
-  #login-screen { position: fixed; inset: 0; background: white; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; transition: 0.5s; }
-  .google-btn { background: #4285F4; color: white; padding: 12px 24px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-  
-  /* Ana Arayüz */
-  header { background: var(--primary); color: white; padding: 20px; text-align: center; font-size: 24px; }
-  nav { display: flex; justify-content: space-around; background: white; padding: 10px; border-bottom: 2px solid #ddd; }
-  nav button { background: none; border: none; font-weight: bold; color: #666; cursor: pointer; }
-  nav button.active { color: var(--primary); border-bottom: 2px solid var(--primary); }
+  /* 🌈 RENKLİ VE CANLI TASARIM */
+  :root {
+    --primary: #FF4757; /* Enerjik Kırmızı */
+    --secondary: #2ED573; /* Sağlıklı Yeşil */
+    --accent: #1E90FF; /* Bilgi Mavisi */
+    --bg: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  }
 
-  section { display: none; padding: 20px; max-width: 500px; margin: auto; text-align: center; }
-  .active-section { display: block; animation: slideUp 0.4s ease; }
+  body { 
+    font-family: 'Poppins', sans-serif; 
+    margin:0; 
+    background: var(--bg); 
+    min-height: 200vh; /* Siteyi aşağı doğru uzattım */
+    color: #2f3542;
+  }
 
-  /* Kart Tasarımları */
-  .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-top: 20px; }
-  .new-product-form { display: none; border-top: 2px dashed #ccc; margin-top: 20px; padding-top: 20px; }
-  input { width: 80%; padding: 10px; margin: 5px 0; border: 1px solid #ddd; border-radius: 8px; }
-  
-  video { width: 100%; border-radius: 15px; background: #222; margin-bottom: 10px; }
+  /* GİRİŞ EKRANI */
+  #login-screen {
+    position: fixed; inset: 0; 
+    background: white; 
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    z-index: 2000; transition: 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  }
 
-  @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  /* HAVALI BUTONLAR */
+  .btn-main {
+    padding: 15px 35px; border: none; border-radius: 50px;
+    background: var(--primary); color: white; font-weight: bold;
+    cursor: pointer; box-shadow: 0 10px 20px rgba(255, 71, 87, 0.3);
+    transition: 0.3s;
+  }
+  .btn-main:hover { transform: scale(1.05); }
+
+  /* ANA PANEL */
+  header { 
+    background: white; padding: 20px; text-align: center; 
+    border-radius: 0 0 30px 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  }
+
+  section { padding: 25px; max-width: 450px; margin: 20px auto; display: none; }
+  .active-section { display: block; animation: fadeIn 0.6s ease; }
+
+  /* ANALİZ KARTI */
+  .card {
+    background: white; padding: 25px; border-radius: 25px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.3);
+  }
+
+  /* YAPAY ZEKA TAHMİN FORMU */
+  .ai-box {
+    background: #f1f2f6; border-radius: 15px; padding: 15px; margin-top: 15px;
+    border-left: 5px solid var(--accent); text-align: left;
+  }
+
+  .health-gauge {
+    width: 100px; height: 100px; border-radius: 50%;
+    border: 8px solid #eee; margin: 15px auto;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; font-weight: bold;
+  }
+
+  video { width: 100%; border-radius: 20px; filter: saturate(1.2); }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 </style>
 </head>
 <body>
 
 <div id="login-screen">
-  <h1 style="color: var(--primary);">D-Fit</h1>
-  <p>Sağlıklı yaşam serüvenine başla!</p>
-  <input type="text" id="userNameInput" placeholder="İsmini Yaz (Simülasyon)" style="text-align:center; margin-bottom:15px;">
-  <button class="google-btn" onclick="login()">G - Google ile Giriş Yap</button>
-  <p style="font-size: 12px; color: #888; margin-top: 20px;">*Demo sürümüdür</p>
+  <div style="font-size: 80px; margin-bottom: 20px;">🥗</div>
+  <h1 style="margin:0; color: var(--primary);">D-FIT PRO</h1>
+  <p>Geleceğin Sağlık Asistanı</p>
+  <input type="text" id="userNameInput" placeholder="Adın nedir?" 
+         style="padding: 12px; border-radius: 25px; border: 2px solid #eee; margin: 20px; width: 250px; text-align: center;">
+  <button class="btn-main" onclick="login()">GİRİŞ YAP (SIGN IN)</button>
 </div>
 
-<header id="appHeader">D-Fit</header>
+<header>
+  <h2 id="welcomeTitle" style="margin:0;">D-Fit</h2>
+</header>
 
-<nav id="navbar" style="display:none;">
-  <button onclick="changeTab('home')" id="btn-home">Ev</button>
-  <button onclick="changeTab('scan')" id="btn-scan">Tarayıcı</button>
-  <button onclick="changeTab('history')" id="btn-history">Geçmiş</button>
+<nav style="display: flex; justify-content: center; gap: 20px; margin-top: 15px;">
+  <button onclick="changeTab('scan')" class="btn-main" style="padding: 10px 20px; background: var(--secondary);">📸 TARA</button>
+  <button onclick="changeTab('tips')" class="btn-main" style="padding: 10px 20px; background: var(--accent);">💡 İPUÇLARI</button>
 </nav>
 
-<section id="home">
+<section id="scan" class="active-section">
   <div class="card">
-    <h2 id="welcomeText">Merhaba!</h2>
-    <p>Bugün harika görünüyorsun. Hadi bir şeyler tarayalım!</p>
+    <video id="preview"></video>
+    <div id="status" style="margin-top: 10px; font-weight: bold; color: #777;">Kamera Hazır...</div>
+    
+    <div id="resultArea" style="margin-top: 20px; display: none;">
+      <div id="gauge" class="health-gauge">0%</div>
+      <h3 id="resName">Ürün</h3>
+      <p id="resDesc"></p>
+    </div>
+
+    <div id="aiAnalysis" class="ai-box" style="display: none;">
+      <h4>🤖 Ürünü Tanımlayalım</h4>
+      <p style="font-size: 13px;">Bu barkodu ilk kez görüyorum! İçinde ne var?</p>
+      <select id="foodType" style="width: 100%; padding: 8px; border-radius: 5px;">
+        <option value="10">Tatlı / Şekerli / Dubai Roll (Zararlı)</option>
+        <option value="50">Atıştırmalık / Bisküvi (Orta)</option>
+        <option value="90">Meyve / Sebze / Doğal (Çok Sağlıklı)</option>
+      </select>
+      <button onclick="aiCalculate()" class="btn-main" style="width: 100%; margin-top: 10px; background: var(--accent);">HESAPLA</button>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top: 40px; background: rgba(255,255,255,0.7);">
+    <h4>📊 Günlük İstatistiklerin</h4>
+    <p>Bugün toplam <b>3</b> ürün taradın.</p>
+    <div style="background: #eee; height: 10px; border-radius: 5px;">
+        <div style="width: 70%; background: var(--secondary); height: 100%; border-radius: 5px;"></div>
+    </div>
+    <p style="font-size: 12px;">Hedefine %70 yaklaştın!</p>
   </div>
 </section>
 
-<section id="scan">
-  <div class="card">
-    <video id="preview"></video>
-    <input type="text" id="barcodeInput" placeholder="Barkod Manuel Gir">
-    <button onclick="checkProduct()" style="background: var(--primary); color:white; border:none; padding:10px 20px; border-radius:5px; margin-top:10px;">Analiz Et</button>
-    
-    <div id="resultArea"></div>
-
-    <div id="addForm" class="new-product-form">
-      <h4 style="color:#d32f2f">Ups! Ürün Bulunamadı.</h4>
-      <p>Bu ürünü ilk sen eklemek ister misin?</p>
-      <input type="text" id="newProdName" placeholder="Ürün Adı (Örn: Dubai Roll)">
-      <input type="number" id="newProdHealth" placeholder="Sağlık Skoru (0-100)">
-      <button onclick="saveProduct()" style="background:#4285F4; color:white; border:none; padding:8px; width:85%; border-radius:5px;">Sisteme Kaydet</button>
+<section id="tips">
+    <div class="card">
+        <h3>Günün Tavsiyesi</h3>
+        <p>"Su içmek sadece susuzluğu gidermez, beynini de hızlandırır!"</p>
+        <img src="https://images.unsplash.com/photo-1559839734-2b71f1e3c770?auto=format&fit=crop&w=200" style="width: 100%; border-radius: 15px;">
     </div>
-  </div>
 </section>
 
 <script src="https://unpkg.com/@zxing/library@latest"></script>
 <script>
   let userName = "";
-  const products = { "8691234": {name:"Süt", health:90}, "1111": {name:"Elma", health:100} };
+  const products = { "869123": {name: "Doğal Süt", score: 95, desc: "Harika bir kalsiyum kaynağı!"} };
   const codeReader = new ZXing.BrowserBarcodeReader();
 
   function login() {
-    userName = document.getElementById('userNameInput').value || "Misafir";
-    document.getElementById('login-screen').style.opacity = '0';
-    setTimeout(() => {
-      document.getElementById('login-screen').style.display = 'none';
-      document.getElementById('navbar').style.display = 'flex';
-      document.getElementById('welcomeText').innerText = `Merhaba ${userName}! 👋`;
-      changeTab('home');
-    }, 500);
+    userName = document.getElementById('userNameInput').value || "Şampiyon";
+    document.getElementById('login-screen').style.transform = 'translateY(-100%)';
+    document.getElementById('welcomeTitle').innerText = `Selam ${userName}! ✨`;
   }
 
   function changeTab(id) {
@@ -99,40 +152,43 @@
 
   function startCamera() {
     codeReader.decodeFromVideoDevice(null, 'preview', (result) => {
-      if(result) {
-        document.getElementById('barcodeInput').value = result.text;
-        checkProduct();
-      }
+      if(result) analyze(result.text);
     });
   }
 
-  function checkProduct() {
-    const code = document.getElementById('barcodeInput').value;
-    const res = document.getElementById('resultArea');
-    const form = document.getElementById('addForm');
+  function analyze(code) {
+    const resArea = document.getElementById('resultArea');
+    const aiBox = document.getElementById('aiAnalysis');
     
     if(products[code]) {
-      form.style.display = "none";
-      const p = products[code];
-      res.innerHTML = `<h3>${p.name}</h3><p>Sağlık: %${p.health}</p>`;
-      res.style.color = p.health > 70 ? "green" : "red";
+      showResult(products[code].score, products[code].name, products[code].desc);
+      aiBox.style.display = "none";
     } else {
-      res.innerHTML = "";
-      form.style.display = "block"; // Bulunamayınca form açılır
+      resArea.style.display = "none";
+      aiBox.style.display = "block";
+      document.getElementById('status').innerText = "Barkod: " + code + " (Yeni Ürün!)";
     }
   }
 
-  function saveProduct() {
-    const code = document.getElementById('barcodeInput').value;
-    const name = document.getElementById('newProdName').value;
-    const health = document.getElementById('newProdHealth').value;
+  function aiCalculate() {
+    const score = document.getElementById('foodType').value;
+    const name = "Yeni Ürün";
+    const desc = score < 30 ? "Dikkat! Şeker oranı yüksek görünüyor." : "Güzel bir seçim!";
+    showResult(score, name, desc);
+  }
+
+  function showResult(score, name, desc) {
+    const resArea = document.getElementById('resultArea');
+    resArea.style.display = "block";
+    document.getElementById('resName').innerText = name;
+    document.getElementById('resDesc').innerText = desc;
     
-    if(name && health) {
-      products[code] = {name: name, health: health};
-      alert(`${name} başarıyla eklendi!`);
-      checkProduct();
-    }
+    const gauge = document.getElementById('gauge');
+    gauge.innerText = "%" + score;
+    gauge.style.borderColor = score > 70 ? "#2ED573" : (score > 40 ? "#FFC107" : "#FF4757");
+    gauge.style.color = gauge.style.borderColor;
   }
 </script>
+
 </body>
 </html>
